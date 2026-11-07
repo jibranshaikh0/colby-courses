@@ -26,6 +26,11 @@ To refresh it or add a term (needs a Colby Workday login):
 
 Raw responses include the logged-in user's name and ID, so `raw-*.json` is git-ignored. Only the parsed file is committed.
 
+## Makers
+
+Jibran Shaikh and Samir Dhami, Colby College.
+With humble thanks to [Repose](https://repose.herakraft.co), Colby Hacker, and [Claude](https://claude.ai).
+
 ## License
 
 MIT
