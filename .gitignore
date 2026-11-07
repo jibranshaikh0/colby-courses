@@ -1,0 +1,5 @@
+# Raw Workday responses carry the logged-in student's name and ID; never commit them.
+raw-*.json
+.playwright-mcp/
+snap.yml
+__pycache__/

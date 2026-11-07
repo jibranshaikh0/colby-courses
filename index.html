@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colby Courses</title>
+<style>
+  :root { --fg:#1d1d1f; --muted:#666; --line:#ddd; --bg:#fafafa; --card:#fff; --accent:#002169; --open:#1a7f37; --wait:#b35900; }
+  @media (prefers-color-scheme: dark) { :root { --fg:#eee; --muted:#aaa; --line:#333; --bg:#111; --card:#1b1b1b; --accent:#8fb3ff; --open:#4ac26b; --wait:#f0a040; } }
+  body { margin:0; font:15px/1.45 system-ui, sans-serif; color:var(--fg); background:var(--bg); }
+  main { max-width:960px; margin:0 auto; padding:16px; }
+  h1 { color:var(--accent); margin:.2em 0; }
+  form { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  input, select { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--fg); }
+  input[type=search] { flex:1 1 240px; }
+  label.check { display:flex; align-items:center; gap:4px; }
+  #count { color:var(--muted); margin:4px 0 12px; }
+  details { background:var(--card); border:1px solid var(--line); border-radius:8px; margin:8px 0; padding:10px 12px; }
+  summary { cursor:pointer; list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  .code { font-weight:600; }
+  .meta { color:var(--muted); font-size:.9em; }
+  .Open { color:var(--open); } .Waitlist, .Closed { color:var(--wait); }
+  .tag { display:inline-block; border:1px solid var(--line); border-radius:99px; padding:0 8px; margin:2px 4px 0 0; font-size:.8em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Colby Courses</h1>
+  <p class="meta">Course sections for <span id="term"></span>, from Colby's Workday course search.</p>
+  <form id="filters">
+    <input type="search" id="q" placeholder="Search title, code, instructor, description" aria-label="Search">
+    <select id="subject" aria-label="Subject"><option value="">All subjects</option></select>
+    <select id="tag" aria-label="Course tag"><option value="">All tags</option></select>
+    <select id="day" aria-label="Meets on">
+      <option value="">Any day</option><option value="M">Mon</option><option value="T">Tue</option>
+      <option value="W">Wed</option><option value="R">Thu</option><option value="F">Fri</option>
+    </select>
+    <label class="check"><input type="checkbox" id="open"> Open only</label>
+  </form>
+  <div id="count" aria-live="polite"></div>
+  <div id="list"></div>
+</main>
+<script>
+const DATA = 'data/courses-fall2026.json';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
+const list = v => v == null ? [] : Array.isArray(v) ? v : [v];
+// Meeting strings look like "Room | MW | 1:00 PM - 2:15 PM"; the days part is the all-letters segment.
+const days = c => list(c['Section Details']).flatMap(s => s.split(' | ')).filter(p => /^[MTWRFSU]+$/.test(p)).join('');
+
+let courses = [];
+
+function render() {
+  const q = $('q').value.trim().toLowerCase(), subj = $('subject').value, tag = $('tag').value,
+        day = $('day').value, openOnly = $('open').checked;
+  const hits = courses.filter(c =>
+    (!subj || c.subject === subj) &&
+    (!tag || list(c['Course Tags']).includes(tag)) &&
+    (!day || c._days.includes(day)) &&
+    (!openOnly || c['Section Status'] === 'Open') &&
+    (!q || c._text.includes(q)));
+  $('count').textContent = `${hits.length} of ${courses.length} sections`;
+  $('list').innerHTML = hits.map(c => `
+    <details>
+      <summary>
+        <span class="code">${esc(c.section)}</span><br>
+        <span class="meta"><span class="${esc(c['Section Status'])}">${esc(c['Section Status'])}</span>
+          · ${esc(list(c.Instructors).join(', ') || 'Staff')} · ${esc(c.Credits)} · ${esc(c['Enrolled/Capacity'])}</span>
+      </summary>
+      <p>${list(c['Section Details']).map(esc).join('<br>') || 'No meeting time listed'}</p>
+      ${c['Cross-Listed Title'] ? `<p class="meta">Cross-listed: ${esc(c['Cross-Listed Title'])}</p>` : ''}
+      <p>${esc(c.Description || 'No description.')}</p>
+      <div>${list(c['Course Tags']).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+    </details>`).join('');
+}
+
+fetch(DATA).then(r => r.json()).then(data => {
+  courses = data.map(c => ({ ...c, _days: days(c),
+    _text: [c.section, list(c.Instructors).join(' '), c.Description, c['Inventory Owner']].join(' ').toLowerCase() }));
+  $('term').textContent = courses[0]?.['Starting Academic Period'] ?? '';
+  const opts = (id, vals) => $(id).insertAdjacentHTML('beforeend',
+    [...new Set(vals)].sort().map(v => `<option>${esc(v)}</option>`).join(''));
+  opts('subject', courses.map(c => c.subject));
+  opts('tag', courses.flatMap(c => list(c['Course Tags'])));
+  $('filters').addEventListener('input', render);
+  $('filters').addEventListener('submit', e => e.preventDefault());
+  render();
+}).catch(e => { $('count').textContent = `Could not load ${DATA}: ${e.message}`; });
+</script>
+</body>
+</html>
