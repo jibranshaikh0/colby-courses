@@ -23,6 +23,8 @@
   .Open { color:var(--open); } .Waitlist, .Closed { color:var(--wait); }
   footer { border-top:1px solid var(--line); margin-top:24px; padding-top:8px; }
   footer a { color:var(--accent); }
+  .rmp { color:var(--accent); font-weight:600; }
+  .rmpblock { border-left:3px solid var(--accent); padding:4px 10px; margin:6px 0; font-size:.9em; }
   .tag { display:inline-block; border:1px solid var(--line); border-radius:99px; padding:0 8px; margin:2px 4px 0 0; font-size:.8em; }
 </style>
 </head>
@@ -47,10 +49,14 @@
     <p>With humble thanks to <a href="https://repose.herakraft.co">Repose</a>, Colby Hacker, and
       <a href="https://claude.ai">Claude</a>.
       Open source on <a href="https://github.com/jibranshaikh0/colby-courses">GitHub</a>.</p>
+    <p>Ratings from <a href="https://www.ratemyprofessors.com">RateMyProfessors</a>, matched per professor AND course.
+      "Easiness proxy" maps RMP difficulty 1-5 to Layup List's -1..+1 vote units; it is a linear proxy,
+      not a measured Dartmouth score. Sections without a matching professor-course pair show no rating.</p>
   </footer>
 </main>
 <script>
 const DATA = 'data/courses-fall2026.json';
+const RMP = 'data/rmp-course-ratings-fall2026.json';
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 const list = v => v == null ? [] : Array.isArray(v) ? v : [v];
@@ -69,22 +75,31 @@ function render() {
     (!openOnly || c['Section Status'] === 'Open') &&
     (!q || c._text.includes(q)));
   $('count').textContent = `${hits.length} of ${courses.length} sections`;
-  $('list').innerHTML = hits.map(c => `
+  $('list').innerHTML = hits.map(c => {
+    const rmp = (c._rmp?.professors || []).filter(p => !p.excluded && p.course_review_count > 0);
+    const badge = rmp.length ? ` · <span class="rmp">RMP ${esc(rmp.map(p=>`${p.rmp_name.split(' ').pop()} ${p.avg_difficulty_1to5?.toFixed(1)}/5 (${p.course_review_count})`).join(' · '))}</span>` : '';
+    const block = rmp.length ? `<div class="rmpblock"><b>RateMyProfessors (this professor, this course)</b><br>${rmp.map(p =>
+      `${esc(p.rmp_name)}: difficulty ${esc(p.avg_difficulty_1to5)}/5, quality ${esc(p.avg_quality_1to5)}/5` +
+      (p.would_take_again_pct != null ? `, ${esc(p.would_take_again_pct)}% would take again` : '') +
+      ` <span class="meta">(${p.course_review_count} review${p.course_review_count===1?'':'s'}; easiness proxy ${esc(p.easiness_proxy)} on Layup List's -1..+1 scale)</span>`).join('<br>')}</div>` : '';
+    return `
     <details>
       <summary>
         <span class="code">${esc(c.section)}</span><br>
         <span class="meta"><span class="${esc(c['Section Status'])}">${esc(c['Section Status'])}</span>
-          · ${esc(list(c.Instructors).join(', ') || 'Staff')} · ${esc(c.Credits)} · ${esc(c['Enrolled/Capacity'])}</span>
+          · ${esc(list(c.Instructors).join(', ') || 'Staff')} · ${esc(c.Credits)} · ${esc(c['Enrolled/Capacity'])}${badge}</span>
       </summary>
       <p>${list(c['Section Details']).map(esc).join('<br>') || 'No meeting time listed'}</p>
       ${c['Cross-Listed Title'] ? `<p class="meta">Cross-listed: ${esc(c['Cross-Listed Title'])}</p>` : ''}
-      <p>${esc(c.Description || 'No description.')}</p>
+      ${block}
+      <p>${esc(String(c.Description || 'No description.').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim())}</p>
       <div>${list(c['Course Tags']).map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
-    </details>`).join('');
+    </details>`; }).join('');
 }
 
-fetch(DATA).then(r => r.json()).then(data => {
-  courses = data.map(c => ({ ...c, _days: days(c),
+Promise.all([fetch(DATA).then(r=>r.json()), fetch(RMP).then(r=>r.json()).catch(()=>[])]).then(([data, rmpData]) => {
+  const rmpById = Object.fromEntries(rmpData.map(r => [r.workday_id, r]));
+  courses = data.map(c => ({ ...c, _days: days(c), _rmp: rmpById[c.workday_id],
     _text: [c.section, list(c.Instructors).join(' '), c.Description, c['Inventory Owner']].join(' ').toLowerCase() }));
   $('term').textContent = courses[0]?.['Starting Academic Period'] ?? '';
   const opts = (id, vals) => $(id).insertAdjacentHTML('beforeend',
