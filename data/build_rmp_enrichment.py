@@ -90,6 +90,12 @@ def first_token(s):
 def norm_class(s):
     return re.sub(r'[^A-Z0-9]','', (s or '').upper())
 
+def wd_code(c):
+    """Workday course code under the SAME normalization as RMP class strings.
+    Workday numbers can carry a space ("BI" + "163 L"); without this, exact codes such as
+    BI163L could never match. Suffix letters are kept: BI163L stays distinct from BI163."""
+    return norm_class(c['subject'] + c['number'])
+
 def build():
     def load(name):
         with open(path(name), encoding='utf-8') as f:
@@ -98,7 +104,13 @@ def build():
     teachers = [e['node'] for e in load('rmp_teachers.json')['data']['search']['teachers']['edges']]
     raw_reviews = load('rmp_reviews.json')
 
-    valid = set((c['subject'] + c['number']).upper() for c in courses)
+    forms = defaultdict(set)
+    for c in courses:
+        forms[wd_code(c)].add((c['subject'] + c['number']).upper())
+    clash = {k: v for k, v in forms.items() if len(v) > 1}
+    if clash:
+        sys.exit(f'distinct Workday course codes collapse to one normalized code: {clash}')
+    valid = set(forms)
 
     def resolve_class(raw):
         """Normalize; only alias applied is BIOxxx -> BIxxx when the long form is NOT a
@@ -185,7 +197,7 @@ def build():
 
     enriched, sec_covered = [], 0
     for c in courses:
-        ccode = (c['subject'] + c['number']).upper()
+        ccode = wd_code(c)
         profs = []
         for name in (c.get('Instructors') or []):
             if name in excluded:
@@ -217,7 +229,7 @@ def build():
     with open(path('rmp-course-ratings-fall2026.json'), 'w', encoding='utf-8') as f:
         json.dump(enriched, f, indent=1)
     fall = sum(len(v) for (n,cc),v in pair.items() if cc in valid)
-    taught = {(n, (c['subject'] + c['number']).upper()) for c in courses for n in (c.get('Instructors') or [])}
+    taught = {(n, wd_code(c)) for c in courses for n in (c.get('Instructors') or [])}
     rated_pairs = {k: v for k, v in pair.items() if k in taught and v}
     used_ids = {info['rmp_id'] for info in prof_info.values()}
     print('unique Workday instructor names:', len(instr_names))
