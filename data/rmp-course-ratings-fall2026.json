@@ -13467,7 +13467,7 @@
    {
     "name": "Arnout van der Meer",
     "excluded": true,
-    "reason": "no-rmp-lastname",
+    "reason": "reviews-not-in-snapshot",
     "course_review_count": 0,
     "reviews": []
    }
@@ -13752,7 +13752,7 @@
    {
     "name": "Arnout van der Meer",
     "excluded": true,
-    "reason": "no-rmp-lastname",
+    "reason": "reviews-not-in-snapshot",
     "course_review_count": 0,
     "reviews": []
    }
@@ -14044,7 +14044,7 @@
    {
     "name": "Arnout van der Meer",
     "excluded": true,
-    "reason": "no-rmp-lastname",
+    "reason": "reviews-not-in-snapshot",
     "course_review_count": 0,
     "reviews": []
    }

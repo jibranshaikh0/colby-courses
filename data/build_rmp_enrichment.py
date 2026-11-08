@@ -128,13 +128,14 @@ def build():
 
     def match(name):
         """Strict: exact full first-token equality (nickname map allowed) + exact last name.
-        Multi-word last names tried longest-first. Anything less is excluded, never guessed."""
+        Every multi-word last-name suffix is tried, longest first ("arnout van der meer" tries
+        "van der meer", "der meer", "meer"); the first one RMP knows is used. The final
+        single-token fallback covers middle names/initials. Anything less is excluded, never guessed."""
         n = norm(name)
         if not n or n in ('staff','tbd','faculty'): return None, 'not-a-person'
         parts = n.split()
         first = parts[0]
-        keys = [' '.join(parts[-2:])] if len(parts) >= 3 else []
-        keys.append(parts[-1])
+        keys = [' '.join(parts[i:]) for i in range(1, len(parts))] or [parts[-1]]
         cands = []
         for k in keys:
             if k in by_last: cands = by_last[k]; break
