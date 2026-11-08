@@ -216,13 +216,6 @@
       <select id="tag"><option value="">All tags</option></select>
     </div>
     <div class="field">
-      <label class="lbl" for="day">Meets on</label>
-      <select id="day">
-        <option value="">Any day</option><option value="M">Mon</option><option value="T">Tue</option>
-        <option value="W">Wed</option><option value="R">Thu</option><option value="F">Fri</option>
-      </select>
-    </div>
-    <div class="field">
       <label class="lbl" for="pattern">Meeting pattern</label>
       <select id="pattern"><option value="">Any pattern</option></select>
     </div>
@@ -248,7 +241,7 @@
   <div id="empty" hidden>
     <p class="empty-title">No sections match these filters.</p>
     <p>Try a shorter or different search term, pick &ldquo;All subjects&rdquo; or &ldquo;All tags&rdquo;,
-      choose &ldquo;Any day&rdquo;, or turn off &ldquo;Open sections only&rdquo;.</p>
+      choose &ldquo;Any pattern&rdquo;, or turn off &ldquo;Open sections only&rdquo;.</p>
     <button type="button" id="empty-clear" class="btn">Clear all filters</button>
   </div>
 </main>
@@ -282,11 +275,6 @@ function $(id) { return document.getElementById(id); }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, function (c) { return '&#' + c.charCodeAt(0) + ';'; }); }
 function list(v) { return v == null ? [] : Array.isArray(v) ? v : [v]; }
 function num(v) { return typeof v === 'number' && Number.isFinite(v) ? v : null; }
-// Meeting strings look like "Room | MW | 1:00 PM - 2:15 PM"; the days part is the all-letters segment.
-function days(c) {
-  return list(c['Section Details']).flatMap(function (s) { return String(s).split(' | '); })
-    .filter(function (p) { return /^[MTWRFSU]+$/.test(p); }).join('');
-}
 
 // Real recurring meeting pattern: ONE component per meeting string, never merged across meetings
 // (lecture MWF + lab R is "MWF + R", not "MWRF"). Components: most days first, then day order.
@@ -383,7 +371,6 @@ function normalize(c, rmpById) {
     _desc: desc,
     _instructors: instructors,
     _tags: list(c['Course Tags']).map(String).filter(Boolean),
-    _days: days(c),
     _rmp: rmp && rmp.course_code === code ? rmp : undefined,
     _text: [section, instructors.join(' '), desc.join(' '), c['Inventory Owner'] ?? ''].join(' ').toLowerCase()
   });
@@ -457,7 +444,7 @@ function cardHTML(c) {
 
 function filtersActive() {
   return $('q').value.trim() !== '' || $('subject').value !== '' || $('tag').value !== '' ||
-         $('day').value !== '' || $('pattern').value !== '' || $('open').checked;
+         $('pattern').value !== '' || $('open').checked;
 }
 
 function el(tag, cls, text) { var e = document.createElement(tag); e.className = cls; if (text != null) e.textContent = text; return e; }
@@ -479,9 +466,9 @@ function groupNodes(hits) {
 // Cards are built once; filtering only moves existing nodes (no re-parsing, open cards stay open).
 function render() {
   var q = $('q').value.trim().toLowerCase(), subj = $('subject').value, tag = $('tag').value,
-      day = $('day').value, pat = $('pattern').value, openOnly = $('open').checked;
+      pat = $('pattern').value, openOnly = $('open').checked;
   var hits = courses.filter(function (c) {
-    return (!subj || c.subject === subj) && (!tag || c._tags.includes(tag)) && (!day || c._days.includes(day)) &&
+    return (!subj || c.subject === subj) && (!tag || c._tags.includes(tag)) &&
            (!pat || c._pattern === pat) && (!openOnly || c['Section Status'] === 'Open') && (!q || c._text.includes(q));
   });
   var nodes = $('group').value === 'pattern' ? groupNodes(hits) : hits.map(function (c) { return c._el; });
@@ -493,7 +480,7 @@ function render() {
 
 // Clears the filters only; the Arrange view setting (#group) is kept.
 function clearFilters() {
-  $('q').value = ''; $('subject').value = ''; $('tag').value = ''; $('day').value = ''; $('pattern').value = '';
+  $('q').value = ''; $('subject').value = ''; $('tag').value = ''; $('pattern').value = '';
   $('open').checked = false;
   render();
   $('q').focus();
