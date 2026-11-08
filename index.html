@@ -127,6 +127,7 @@
   .stats div { display: flex; flex-direction: column; gap: 4px; }
   .stats dt { font-size: .875rem; color: var(--muted-fg); }
   .stats .sub { white-space: nowrap; }
+  #landing .notice { margin-top: calc(-1 * var(--space-2)); text-align: left; }
   .hero-search { text-align: left; margin: 0 0 var(--space-3); }
   .hero-row { display: flex; gap: var(--space-1); margin-top: 4px; }
   .hero-row input { flex: 1; min-height: 52px; font-size: 1.0625rem; }
@@ -264,6 +265,7 @@
       <div><dt>Sections with a matched RateMyProfessors rating</dt><dd id="stat-rated">&hellip;</dd></div>
       <div><dt>Matched RateMyProfessors reviews <span class="sub">(of 1,467 imported)</span></dt><dd id="stat-reviews">&hellip;</dd></div>
     </dl>
+    <p id="landing-rmp-status" class="notice" role="status" hidden></p>
     <form id="landing-search" class="hero-search" role="search" aria-label="Search the catalog">
       <label class="lbl" for="landing-q">Search the Fall course catalog</label>
       <div class="hero-row">
@@ -618,14 +620,24 @@ function applyRoute(moveFocus) {
   render();
   if (moveFocus) $('q').focus();
 }
-function showStats(all) {
+// ratingsOk = false: the ratings file failed to load, so the two RMP figures are unknown, not zero.
+// They show a dash (read as "unavailable") and the landing shows the RMP_FAILED notice; never "0" as fact.
+function showStats(all, ratingsOk) {
+  $('stat-sections').textContent = all.length.toLocaleString('en-US');
+  if (!ratingsOk) {
+    ['stat-rated', 'stat-reviews'].forEach(function (id) {
+      var dash = el('span', '', '—');
+      dash.setAttribute('aria-hidden', 'true');
+      $(id).replaceChildren(dash, el('span', 'sr-only', 'unavailable'));
+    });
+    return;
+  }
   var reviewIds = new Set(), ratedSections = 0;
   all.forEach(function (c) {
     var rows = rated(c);
     if (rows.length) ratedSections++;
     rows.forEach(function (p) { list(p.reviews).forEach(function (r) { if (r && r.id != null) reviewIds.add(String(r.id)); }); });
   });
-  $('stat-sections').textContent = all.length.toLocaleString('en-US');
   $('stat-rated').textContent = ratedSections.toLocaleString('en-US');
   $('stat-reviews').textContent = reviewIds.size.toLocaleString('en-US');
 }
@@ -685,7 +697,7 @@ async function init() {
   $('list').innerHTML = built.map(cardHTML).join('');
   Array.from($('list').children).forEach(function (el, i) { built[i]._el = el; built[i]._rated = rated(built[i]).length > 0; });
   courses = built;
-  showStats(built);
+  showStats(built, r.ok);
   // Listeners are attached in the same synchronous block that fills `courses`, so no event can
   // reach render() before the data is ready. Selects and checkboxes fire `input` on change.
   $('filters').addEventListener('input', render);
@@ -696,9 +708,12 @@ async function init() {
   render();
   applyRoute(false);
   if (!r.ok) {
-    var s = $('rmp-status');
-    s.hidden = false;
-    s.textContent = RMP_FAILED;
+    // Same notice in both views: the landing stats above and the catalog list.
+    ['rmp-status', 'landing-rmp-status'].forEach(function (id) {
+      var s = $(id);
+      s.hidden = false;
+      s.textContent = RMP_FAILED;
+    });
   }
 }
 
