@@ -100,4 +100,5 @@ raw Dartmouth vote counts).
   this term, including courses that professor is not teaching this term).
 - 91 professor-course pairs taught this term have direct reviews (382 reviews in total).
 - 113 of 861 sections have at least one direct professor-course review (24 professor-section
-  entries rest on a single review).
+  entries rest on a single review). The reference build (3d159d5) reported 110; the +3 delta is
+  the lab/suffix course-code fix, traced section by section in `RMP-COVERAGE-DELTA.md`.
