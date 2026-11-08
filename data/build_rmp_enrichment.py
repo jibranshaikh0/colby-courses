@@ -153,7 +153,7 @@ def build():
     prof_info, excluded = {}, {}
     for name in instr_names:
         m, how = match(name)
-        if m: prof_info[name] = {'rmp_name': f"{m['firstName']} {m['lastName']}",
+        if m: prof_info[name] = {'rmp_name': ' '.join(f"{m.get('firstName') or ''} {m.get('lastName') or ''}".split()),
                                  'rmp_id': m['id'], 'department': m['department'], 'match_type': how}
         else: excluded[name] = how
     strict_matches = len(prof_info)
