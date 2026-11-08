@@ -98,6 +98,33 @@
   .notice { margin: 0 0 var(--space-2); padding: 12px var(--space-2); color: var(--fg); background: var(--muted);
             border: 1px solid var(--border); border-left: 3px solid var(--rmp-line); border-radius: var(--radius); }
 
+  /* Top nav (both views) */
+  .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-2); padding-top: var(--space-1); padding-bottom: var(--space-1);
+            border-bottom: 1px solid var(--border); }
+  .topnav a { display: inline-flex; align-items: center; min-height: 44px; color: var(--primary); font-weight: 700; font-size: .9375rem;
+              text-decoration: none; text-underline-offset: 3px; }
+  .topnav a.brand { margin-right: auto; font: 600 1.25rem/1 var(--font-display); }
+
+  /* Landing view: the shared header becomes the hero; one search box; real stats; CTAs into real catalog views */
+  body.is-landing .site-header { text-align: center; padding-top: 64px; padding-bottom: var(--space-4); }
+  body.is-landing .lede { margin: 0 auto; }
+  body.is-landing h1 { font-size: 3.25rem; }
+  #landing { max-width: 760px; margin: 0 auto; padding-bottom: var(--space-4); text-align: center; }
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); margin: 0 0 var(--space-4); }
+  .stats div { padding: var(--space-2); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+  .stats dd { margin: 0; order: -1; font: 600 2.25rem/1.1 var(--font-display); color: var(--primary); }
+  .stats div { display: flex; flex-direction: column; gap: 4px; }
+  .stats dt { font-size: .875rem; color: var(--muted-fg); }
+  .stats .sub { white-space: nowrap; }
+  .hero-search { text-align: left; margin: 0 0 var(--space-3); }
+  .hero-row { display: flex; gap: var(--space-1); margin-top: 4px; }
+  .hero-row input { flex: 1; min-height: 52px; font-size: 1.0625rem; }
+  .btn-primary { background: var(--primary); color: var(--on-primary); }
+  .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-1); margin: 0 0 var(--space-3); }
+  a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+  .contribute { margin: 0 auto; max-width: 62ch; font-size: .875rem; color: var(--muted-fg); }
+  .contribute a { color: var(--primary); }
+
   /* Course cards: <details> with a layout-reserved disclosure marker column */
   #list { display: grid; gap: var(--space-1); }
   details.course { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
@@ -173,11 +200,19 @@
     input[type=search]:hover, select:hover, label.check:hover { border-color: var(--primary); }
     details.course > summary:hover { background: var(--muted); }
     .btn:hover { background: var(--primary); color: var(--on-primary); }
+    .btn-primary:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+    .topnav a:hover { text-decoration: underline; }
     .footer-inner a:hover { text-decoration-thickness: 2px; }
   }
   @media (max-width: 768px) {
     .wrap { padding: 0 var(--space-2); }
     .field { grid-column: span 6; }
+  }
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: 1fr; }
+    body.is-landing h1 { font-size: 2.5rem; }
+    body.is-landing .site-header { padding-top: var(--space-4); }
+    .hero-row { flex-direction: column; }
   }
   @media (max-width: 480px) {
     .field { grid-column: 1 / -1; }
@@ -193,7 +228,13 @@
   }
 </style>
 </head>
-<body>
+<body class="is-landing">
+<nav class="wrap topnav" aria-label="Site">
+  <a class="brand" href="#">Colby Courses</a>
+  <a href="#catalog">Browse</a>
+  <a href="#catalog?group=pattern">By meeting pattern</a>
+  <a href="#catalog?rated=1">Rated sections</a>
+</nav>
 <header class="wrap site-header">
   <p class="eyebrow">Colby College &middot; <span id="term"></span></p>
   <h1>Colby Courses</h1>
@@ -202,6 +243,32 @@
 </header>
 
 <main class="wrap">
+  <!-- Landing view (default). Every number below is computed from the loaded data at runtime,
+       except the imported-review total, which is the bundled RMP snapshot size (data/RMP-ENRICHMENT-README.md). -->
+  <section id="landing" aria-label="Start here">
+    <dl class="stats">
+      <div><dt>Course sections</dt><dd id="stat-sections">&hellip;</dd></div>
+      <div><dt>Sections with a matched RateMyProfessors rating</dt><dd id="stat-rated">&hellip;</dd></div>
+      <div><dt>Matched RateMyProfessors reviews <span class="sub">(of 1,467 imported)</span></dt><dd id="stat-reviews">&hellip;</dd></div>
+    </dl>
+    <form id="landing-search" class="hero-search" role="search" aria-label="Search the catalog">
+      <label class="lbl" for="landing-q">Search the Fall course catalog</label>
+      <div class="hero-row">
+        <input type="search" id="landing-q" placeholder="Course, instructor, topic or department" autocomplete="off" enterkeyhint="search">
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+    <nav class="ctas" aria-label="Start browsing">
+      <a class="btn" href="#catalog?view=all">Browse all sections</a>
+      <a class="btn" href="#catalog?group=pattern">Group by meeting pattern</a>
+      <a class="btn" href="#catalog?rated=1">Rated sections</a>
+    </nav>
+    <p class="contribute">Ratings are imported from RateMyProfessors, not submitted here: this site has no review form and no accounts.
+      To add a review, post it on <a href="https://www.ratemyprofessors.com">ratemyprofessors.com</a>; it appears here after the
+      maintainers refresh and rebuild the data.</p>
+  </section>
+
+  <div id="catalog" hidden>
   <form id="filters" class="panel" role="search" aria-label="Filter course sections">
     <div class="field f-q">
       <label class="lbl" for="q">Search</label>
@@ -222,6 +289,9 @@
     <div class="field">
       <label class="check" for="open"><input type="checkbox" id="open"> Open sections only</label>
     </div>
+    <div class="field">
+      <label class="check" for="rated"><input type="checkbox" id="rated"> Rated sections only</label>
+    </div>
   </form>
 
   <div class="results-bar">
@@ -241,8 +311,9 @@
   <div id="empty" hidden>
     <p class="empty-title">No sections match these filters.</p>
     <p>Try a shorter or different search term, pick &ldquo;All subjects&rdquo; or &ldquo;All tags&rdquo;,
-      choose &ldquo;Any pattern&rdquo;, or turn off &ldquo;Open sections only&rdquo;.</p>
+      choose &ldquo;Any pattern&rdquo;, or turn off &ldquo;Open sections only&rdquo; and &ldquo;Rated sections only&rdquo;.</p>
     <button type="button" id="empty-clear" class="btn">Clear all filters</button>
+  </div>
   </div>
 </main>
 
@@ -462,7 +533,7 @@ function cardHTML(c) {
 
 function filtersActive() {
   return $('q').value.trim() !== '' || $('subject').value !== '' || $('tag').value !== '' ||
-         $('pattern').value !== '' || $('open').checked;
+         $('pattern').value !== '' || $('open').checked || $('rated').checked;
 }
 
 function el(tag, cls, text) { var e = document.createElement(tag); e.className = cls; if (text != null) e.textContent = text; return e; }
@@ -484,10 +555,10 @@ function groupNodes(hits) {
 // Cards are built once; filtering only moves existing nodes (no re-parsing, open cards stay open).
 function render() {
   var q = $('q').value.trim().toLowerCase(), subj = $('subject').value, tag = $('tag').value,
-      pat = $('pattern').value, openOnly = $('open').checked;
+      pat = $('pattern').value, openOnly = $('open').checked, ratedOnly = $('rated').checked;
   var hits = courses.filter(function (c) {
-    return (!subj || c.subject === subj) && (!tag || c._tags.includes(tag)) &&
-           (!pat || c._pattern === pat) && (!openOnly || c['Section Status'] === 'Open') && (!q || c._text.includes(q));
+    return (!subj || c.subject === subj) && (!tag || c._tags.includes(tag)) && (!pat || c._pattern === pat) &&
+           (!openOnly || c['Section Status'] === 'Open') && (!ratedOnly || c._rated) && (!q || c._text.includes(q));
   });
   var nodes = $('group').value === 'pattern' ? groupNodes(hits) : hits.map(function (c) { return c._el; });
   $('list').replaceChildren.apply($('list'), nodes);
@@ -497,11 +568,50 @@ function render() {
 }
 
 // Clears the filters only; the Arrange view setting (#group) is kept.
-function clearFilters() {
+function resetFilters() {
   $('q').value = ''; $('subject').value = ''; $('tag').value = ''; $('pattern').value = '';
-  $('open').checked = false;
+  $('open').checked = false; $('rated').checked = false;
+}
+function clearFilters() {
+  resetFilters();
   render();
   $('q').focus();
+}
+
+// Views: no hash = landing; "#catalog" = catalog with its current state; "#catalog?..." = a fresh catalog
+// view (filters reset, then q / group=pattern / rated=1 applied). The catalog is always rendered, even
+// while hidden, so it behaves exactly the same whichever way it is reached.
+function routeParams() {
+  var h = location.hash;
+  return /^#catalog(\?|$)/.test(h) ? new URLSearchParams(h.split('?')[1] || '') : null;
+}
+function applyRoute(moveFocus) {
+  var p = routeParams();
+  document.body.classList.toggle('is-landing', !p);
+  $('landing').hidden = !!p;
+  $('catalog').hidden = !p;
+  if (moveFocus) window.scrollTo(0, 0);
+  if (!p) { if (moveFocus) $('landing-q').focus(); return; }
+  if (!courses.length) return;
+  if (Array.from(p.keys()).length) {
+    resetFilters();
+    $('q').value = p.get('q') || '';
+    $('group').value = p.get('group') === 'pattern' ? 'pattern' : '';
+    $('rated').checked = p.get('rated') === '1';
+  }
+  render();
+  if (moveFocus) $('q').focus();
+}
+function showStats(all) {
+  var reviewIds = new Set(), ratedSections = 0;
+  all.forEach(function (c) {
+    var rows = rated(c);
+    if (rows.length) ratedSections++;
+    rows.forEach(function (p) { list(p.reviews).forEach(function (r) { if (r && r.id != null) reviewIds.add(String(r.id)); }); });
+  });
+  $('stat-sections').textContent = all.length.toLocaleString('en-US');
+  $('stat-rated').textContent = ratedSections.toLocaleString('en-US');
+  $('stat-reviews').textContent = reviewIds.size.toLocaleString('en-US');
 }
 
 function fillSelect(id, values, label) {
@@ -557,8 +667,9 @@ async function init() {
   PATTERN_ORDER = orderPatterns(built);
   PATTERN_ORDER.forEach(function (k) { $('pattern').add(new Option(patternLabel(k), k)); });
   $('list').innerHTML = built.map(cardHTML).join('');
-  Array.from($('list').children).forEach(function (el, i) { built[i]._el = el; });
+  Array.from($('list').children).forEach(function (el, i) { built[i]._el = el; built[i]._rated = rated(built[i]).length > 0; });
   courses = built;
+  showStats(built);
   // Listeners are attached in the same synchronous block that fills `courses`, so no event can
   // reach render() before the data is ready. Selects and checkboxes fire `input` on change.
   $('filters').addEventListener('input', render);
@@ -567,6 +678,7 @@ async function init() {
   $('clear').addEventListener('click', clearFilters);
   $('empty-clear').addEventListener('click', clearFilters);
   render();
+  applyRoute(false);
   if (!r.ok) {
     var s = $('rmp-status');
     s.hidden = false;
@@ -574,6 +686,13 @@ async function init() {
   }
 }
 
+$('landing-search').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var v = $('landing-q').value.trim(), target = v ? '#catalog?q=' + encodeURIComponent(v) : '#catalog?view=all';
+  if (location.hash === target) applyRoute(true); else location.hash = target;
+});
+window.addEventListener('hashchange', function () { applyRoute(true); });
+applyRoute(false);
 init();
 </script>
 </body>
