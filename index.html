@@ -276,7 +276,6 @@ var DAY_ORDER = 'MTWRFSU';
 var DAY_NAME = { M: 'Mon', T: 'Tue', W: 'Wed', R: 'Thu', F: 'Fri', S: 'Sat', U: 'Sun' };
 var PATTERN_ORDER = [];
 var courses = [];
-var ready = false;
 
 function $(id) { return document.getElementById(id); }
 // Every data value that reaches innerHTML goes through esc().
@@ -479,7 +478,6 @@ function groupNodes(hits) {
 
 // Cards are built once; filtering only moves existing nodes (no re-parsing, open cards stay open).
 function render() {
-  if (!ready) return;
   var q = $('q').value.trim().toLowerCase(), subj = $('subject').value, tag = $('tag').value,
       day = $('day').value, pat = $('pattern').value, openOnly = $('open').checked;
   var hits = courses.filter(function (c) {
@@ -553,14 +551,13 @@ async function init() {
   $('list').innerHTML = built.map(cardHTML).join('');
   Array.from($('list').children).forEach(function (el, i) { built[i]._el = el; });
   courses = built;
+  // Listeners are attached in the same synchronous block that fills `courses`, so no event can
+  // reach render() before the data is ready. Selects and checkboxes fire `input` on change.
   $('filters').addEventListener('input', render);
-  $('filters').addEventListener('change', render);
   $('filters').addEventListener('submit', function (e) { e.preventDefault(); });
   $('group').addEventListener('input', render);
-  $('group').addEventListener('change', render);
   $('clear').addEventListener('click', clearFilters);
   $('empty-clear').addEventListener('click', clearFilters);
-  ready = true;
   render();
   if (!r.ok) {
     var s = $('rmp-status');

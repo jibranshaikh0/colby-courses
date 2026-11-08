@@ -13,7 +13,7 @@ Run `python3 build_rmp_enrichment.py` -> writes rmp-course-ratings-fall2026.json
 Run `python3 build_rmp_enrichment.py --fetch` to re-pull raw inputs from RMP (network).
 Paths resolve relative to this script, so it can be run from any directory.
 """
-import json, os, re, sys, time, unicodedata, urllib.request
+import json, os, re, sys, time, unicodedata, urllib.error, urllib.request
 from collections import Counter, defaultdict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -50,32 +50,47 @@ NICK = {'abby':'abigail','alex':'alexander','andy':'andrew','ben':'benjamin','be
         'nate':'nathaniel','phil':'philip','rick':'richard','rob':'robert','ron':'ronald',
         'ted':'theodore','tim':'timothy','walt':'walter'}
 
-def post(payload):
+def post(payload, attempts=3):
     # 'Basic dGVzdDp0ZXN0' is base64("test:test"): the static header RMP's own public web
     # client sends with every GraphQL request. It is not a credential or a secret.
     req = urllib.request.Request(GRAPHQL, data=json.dumps(payload).encode(),
         headers={'Content-Type':'application/json','Authorization':'Basic dGVzdDp0ZXN0',
                  'User-Agent':'Mozilla/5.0'})
-    return json.load(urllib.request.urlopen(req, timeout=30))
+    for attempt in range(1, attempts + 1):
+        try:
+            d = json.load(urllib.request.urlopen(req, timeout=30))
+            if not isinstance(d, dict) or d.get('errors') or not isinstance(d.get('data'), dict):
+                raise ValueError(f'unexpected GraphQL response: {str(d)[:200]}')
+            return d
+        except (urllib.error.URLError, TimeoutError, ValueError) as e:
+            if attempt == attempts:
+                raise
+            print(f'retry {attempt}/{attempts - 1} after: {e}', file=sys.stderr)
+            time.sleep(2 * attempt)
 
 def fetch():
+    """Download raw inputs. Nothing is written until every request has succeeded, so a failed
+    refresh can never leave a new teacher list next to an old, smaller review set."""
     d = post({'query': TEACHER_LIST_QUERY,
               'variables': {'query': {'text': '', 'schoolID': SCHOOL_ID, 'fallback': True, 'departmentID': None}}})
     teachers = [e['node'] for e in d['data']['search']['teachers']['edges']]
-    with open(path('rmp_teachers.json'), 'w', encoding='utf-8') as f:
-        json.dump(d, f)
     reviews = {}
     for i, t in enumerate(teachers):
         cursor = None; allr = []
         while True:
             r = post({'query': RATINGS_QUERY, 'variables': {'id': t['id'], 'cursor': cursor}})
-            node = r['data']['node']; rr = node['ratings']
+            node = r['data'].get('node')
+            if not node or not node.get('ratings'):
+                sys.exit(f"RMP returned no ratings for teacher {t['id']}; nothing was written")
+            rr = node['ratings']
             allr += [e['node'] for e in rr['edges']]
             if rr['pageInfo']['hasNextPage']: cursor = rr['pageInfo']['endCursor']
             else: break
         reviews[f"{t['firstName']} {t['lastName']}|{t['id']}"] = allr
         if i % 25 == 0: print('fetched', i)
         time.sleep(0.15)
+    with open(path('rmp_teachers.json'), 'w', encoding='utf-8') as f:
+        json.dump(d, f)
     with open(path('rmp_reviews.json'), 'w', encoding='utf-8') as f:
         json.dump(reviews, f)
 
@@ -96,22 +111,7 @@ def wd_code(c):
     BI163L could never match. Suffix letters are kept: BI163L stays distinct from BI163."""
     return norm_class(c['subject'] + c['number'])
 
-def build():
-    def load(name):
-        with open(path(name), encoding='utf-8') as f:
-            return json.load(f)
-    courses = load('courses-fall2026.json')
-    teachers = [e['node'] for e in load('rmp_teachers.json')['data']['search']['teachers']['edges']]
-    raw_reviews = load('rmp_reviews.json')
-
-    forms = defaultdict(set)
-    for c in courses:
-        forms[wd_code(c)].add((c['subject'] + c['number']).upper())
-    clash = {k: v for k, v in forms.items() if len(v) > 1}
-    if clash:
-        sys.exit(f'distinct Workday course codes collapse to one normalized code: {clash}')
-    valid = set(forms)
-
+def make_resolver(valid):
     def resolve_class(raw):
         """Normalize; only alias applied is BIOxxx -> BIxxx when the long form is NOT a
         Fall-2026 code and the short form IS (RMP writes Biology as BIO, Workday as BI)."""
@@ -120,12 +120,16 @@ def build():
         if code.startswith('BIO') and code[3:].isdigit() and ('BI' + code[3:]) in valid:
             return 'BI' + code[3:]
         return None
+    return resolve_class
 
-    # index RMP teachers by full normalized last name
+def index_by_last(teachers):
+    """RMP teachers indexed by full normalized last name."""
     by_last = defaultdict(list)
     for t in teachers:
         by_last[norm(t['lastName'])].append(t)
+    return by_last
 
+def make_matcher(by_last):
     def match(name):
         """Strict: exact full first-token equality (nickname map allowed) + exact last name.
         Every multi-word last-name suffix is tried, longest first ("arnout van der meer" tries
@@ -146,6 +150,25 @@ def build():
         if len(exact) == 1: return exact[0], 'exact'
         if len(exact) > 1: return None, 'ambiguous-first-name'
         return None, 'lastname-only'
+    return match
+
+def build():
+    def load(name):
+        with open(path(name), encoding='utf-8') as f:
+            return json.load(f)
+    courses = load('courses-fall2026.json')
+    teachers = [e['node'] for e in load('rmp_teachers.json')['data']['search']['teachers']['edges']]
+    raw_reviews = load('rmp_reviews.json')
+
+    forms = defaultdict(set)
+    for c in courses:
+        forms[wd_code(c)].add((c['subject'] + c['number']).upper())
+    clash = {k: v for k, v in forms.items() if len(v) > 1}
+    if clash:
+        sys.exit(f'distinct Workday course codes collapse to one normalized code: {clash}')
+    valid = set(forms)
+    resolve_class = make_resolver(valid)
+    match = make_matcher(index_by_last(teachers))
 
     # attribute reviews to (workday instructor name, course code)
     teacher_by_rmpid = {t['id']: t for t in teachers}
@@ -188,7 +211,12 @@ def build():
         rmp_id = key.rsplit('|', 1)[1]
         wd = wd_by_rmpid.get(rmp_id)
         if not wd: continue
+        seen = set()
         for r in rs:
+            rid = r.get('id')
+            if rid is not None:
+                if rid in seen: continue  # a review repeated across pages must count once
+                seen.add(rid)
             cc = resolve_class(r.get('class'))
             if cc: pair[(wd, cc)].append(r)
 

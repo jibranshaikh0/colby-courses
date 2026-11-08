@@ -15,6 +15,9 @@ Package contents:
 
 Reproduce: `python3 data/build_rmp_enrichment.py` (offline, uses bundled raw inputs). Paths
 resolve relative to the script, so it can be run from any directory.
+Test the matching rules: `python3 data/test_rmp_matching.py` (stdlib only, no network).
+`--fetch` retries each request up to 3 times and writes nothing unless every request succeeds;
+a review repeated across result pages is counted once (by RMP review id).
 Refetch raw inputs: `python3 data/build_rmp_enrichment.py --fetch` downloads raw inputs only
 (hits the live RMP endpoint, all 460 teachers); run the build again afterward. The request
 header `Authorization: Basic dGVzdDp0ZXN0` is base64 of `test:test`, the static value RMP's own
