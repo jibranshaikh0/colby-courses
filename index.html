@@ -89,6 +89,9 @@
   .results-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
                  gap: var(--space-1) var(--space-2); margin: var(--space-3) 0 var(--space-2); }
   #count { margin: 0; color: var(--muted-fg); font-size: .9375rem; }
+  .results-tools { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+  .arrange { display: flex; align-items: center; gap: var(--space-1); }
+  .arrange select { width: auto; }
   .btn { min-height: 44px; padding: 0 var(--space-2); font-size: .9375rem; font-weight: 700; color: var(--primary);
          background: var(--card); border: 1px solid var(--primary); border-radius: var(--radius); cursor: pointer;
          transition: background-color 150ms ease-out, color 150ms ease-out; }
@@ -111,11 +114,20 @@
   .code { margin-right: var(--space-1); font-weight: 700; color: var(--primary); white-space: nowrap; }
   .title { font: 600 1.15rem/1.3 var(--font-display); color: var(--fg); }
   .meta { color: var(--muted-fg); font-size: .9rem; }
+  .pattern { font-weight: 700; color: var(--muted-fg); }
   .marker { grid-column: 2; grid-row: 1; width: 24px; height: 24px; display: flex; align-items: center;
             justify-content: center; color: var(--muted-fg); }
   .marker::before { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
                     transform: translateY(-2px) rotate(45deg); transition: transform 150ms ease-out; }
   details.course[open] > summary .marker::before { transform: translateY(2px) rotate(-135deg); }
+
+  /* Grouped view: one section per real meeting pattern (never merged across meetings) */
+  .group { display: grid; gap: var(--space-1); }
+  .group + .group { margin-top: var(--space-3); }
+  .group-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px var(--space-1); margin: 0; padding-bottom: 4px;
+                border-bottom: 2px solid var(--primary); font: 600 1.25rem/1.3 var(--font-display); color: var(--primary); }
+  .group-days { font: 400 .9375rem/1.4 var(--font-body); color: var(--muted-fg); }
+  .group-n { margin-left: auto; font: 700 .875rem/1.4 var(--font-body); color: var(--muted-fg); }
 
   /* Status pills (status only) */
   .pill { display: inline-block; margin-right: var(--space-1); padding: 1px 10px; border-radius: var(--pill);
@@ -211,13 +223,23 @@
       </select>
     </div>
     <div class="field">
+      <label class="lbl" for="pattern">Meeting pattern</label>
+      <select id="pattern"><option value="">Any pattern</option></select>
+    </div>
+    <div class="field">
       <label class="check" for="open"><input type="checkbox" id="open"> Open sections only</label>
     </div>
   </form>
 
   <div class="results-bar">
     <p id="count" role="status" aria-live="polite">Loading sections&hellip;</p>
-    <button type="button" id="clear" class="btn" hidden>Clear filters</button>
+    <div class="results-tools">
+      <div class="arrange">
+        <label class="lbl" for="group">Arrange</label>
+        <select id="group"><option value="">Catalog order</option><option value="pattern">Group by meeting pattern</option></select>
+      </div>
+      <button type="button" id="clear" class="btn" hidden>Clear filters</button>
+    </div>
   </div>
   <p id="rmp-status" class="notice" role="status" hidden></p>
 
@@ -249,6 +271,10 @@ var DATA = 'data/courses-fall2026.json';
 var RMP = 'data/rmp-course-ratings-fall2026.json';
 var RMP_FAILED = 'RateMyProfessors ratings could not be loaded, so sections are shown without ratings. Course data is unaffected.';
 var STATUS = new Set(['Open', 'Waitlist', 'Closed']);
+var NO_MEETING = 'No meeting time listed';
+var DAY_ORDER = 'MTWRFSU';
+var DAY_NAME = { M: 'Mon', T: 'Tue', W: 'Wed', R: 'Thu', F: 'Fri', S: 'Sat', U: 'Sun' };
+var PATTERN_ORDER = [];
 var courses = [];
 var ready = false;
 
@@ -261,6 +287,41 @@ function num(v) { return typeof v === 'number' && Number.isFinite(v) ? v : null;
 function days(c) {
   return list(c['Section Details']).flatMap(function (s) { return String(s).split(' | '); })
     .filter(function (p) { return /^[MTWRFSU]+$/.test(p); }).join('');
+}
+
+// Real recurring meeting pattern: ONE component per meeting string, never merged across meetings
+// (lecture MWF + lab R is "MWF + R", not "MWRF"). Components: most days first, then day order.
+function dayRank(d) { var i = DAY_ORDER.indexOf(d); return i < 0 ? 99 : i; }
+function cmpComp(a, b) {
+  if (a === 'TBA' || b === 'TBA') return (a === 'TBA') - (b === 'TBA');
+  if (a.length !== b.length) return b.length - a.length;
+  for (var i = 0; i < a.length; i++) { var x = dayRank(a[i]) - dayRank(b[i]); if (x) return x; }
+  return 0;
+}
+function patternKey(c) {
+  var comps = list(c['Section Details']).map(function (s) {
+    var seg = String(s).split(' | ').filter(function (p) { return /^[MTWRFSU]+$/.test(p); })[0];
+    return seg ? Array.from(new Set(seg.split(''))).sort(function (a, b) { return dayRank(a) - dayRank(b); }).join('') : 'TBA';
+  });
+  return comps.length ? comps.sort(cmpComp).join(' + ') : 'none';
+}
+function patternDays(key) {
+  return key.split(' + ').map(function (k) {
+    return k === 'TBA' ? 'days not listed' : k.split('').map(function (d) { return DAY_NAME[d]; }).join(' ');
+  }).join(' + ');
+}
+function patternLabel(key) { return key === 'none' ? NO_MEETING : key + ' · ' + patternDays(key); }
+// Bucket order: most sections first (over all sections, fixed at load), ties in day order, "none" last.
+function orderPatterns(all) {
+  var n = new Map();
+  all.forEach(function (c) { n.set(c._pattern, (n.get(c._pattern) || 0) + 1); });
+  return Array.from(n.keys()).sort(function (a, b) {
+    if ((a === 'none') !== (b === 'none')) return a === 'none' ? 1 : -1;
+    if (n.get(a) !== n.get(b)) return n.get(b) - n.get(a);
+    var x = a.split(' + '), y = b.split(' + ');
+    for (var i = 0; i < Math.min(x.length, y.length); i++) { var d = cmpComp(x[i], y[i]); if (d) return d; }
+    return x.length - y.length;
+  });
 }
 
 // Descriptions arrive as HTML. Convert once, at load, to plain-text paragraphs: DOMParser builds an
@@ -300,9 +361,13 @@ function toParagraphs(raw) {
 }
 
 // Only professors with direct evidence for THIS course (strict per-professor AND per-course match).
+// The ratings entry must also name this section's course code (normalize()) and one of its instructors,
+// so a stale or misaligned ratings file can never attach evidence to the wrong section.
 function rated(c) {
   var ps = c._rmp && Array.isArray(c._rmp.professors) ? c._rmp.professors : [];
-  return ps.filter(function (p) { return p && typeof p === 'object' && !p.excluded && num(p.course_review_count) > 0; });
+  return ps.filter(function (p) {
+    return p && typeof p === 'object' && !p.excluded && num(p.course_review_count) > 0 && c._instructors.includes(String(p.name));
+  });
 }
 
 function normalize(c, rmpById) {
@@ -310,14 +375,17 @@ function normalize(c, rmpById) {
   var cut = section.indexOf(' - ');
   var desc = toParagraphs(c.Description);
   var instructors = list(c.Instructors).map(String).filter(Boolean);
+  var code = String((c.subject ?? '') + (c.number ?? '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  var rmp = rmpById.get(String(c.workday_id));
   return Object.assign({}, c, {
+    _pattern: patternKey(c),
     _code: cut >= 0 ? section.slice(0, cut) : section,
     _title: c.title != null && c.title !== '' ? String(c.title) : (cut >= 0 ? section.slice(cut + 3) : ''),
     _desc: desc,
     _instructors: instructors,
     _tags: list(c['Course Tags']).map(String).filter(Boolean),
     _days: days(c),
-    _rmp: rmpById.get(String(c.workday_id)),
+    _rmp: rmp && rmp.course_code === code ? rmp : undefined,
     _text: [section, instructors.join(' '), desc.join(' '), c['Inventory Owner'] ?? ''].join(' ').toLowerCase()
   });
 }
@@ -346,7 +414,10 @@ function rowHTML(p) {
   var r = num(p.course_review_count);
   parts.push(r + ' review' + (r === 1 ? '' : 's') + yearSpan(p.reviews));
   var e = num(p.easiness_proxy);
-  if (e != null) parts.push('easiness proxy ' + (e > 0 ? '+' : '') + e);
+  if (e != null) {
+    var s = Math.abs(e) < 0.005 ? '0.00' : (e > 0 ? '+' : '') + e.toFixed(2);
+    parts.push('easiness proxy ' + s + ' (linear, -1..+1 scale)');
+  }
   var profile = p.rmp_name && String(p.rmp_name) !== String(p.name) ? ' (RMP profile: ' + esc(p.rmp_name) + ')' : '';
   return '<li class="rmprow"><strong>' + esc(p.name) + '</strong>' + profile + ': ' + esc(parts.join(' · ')) + '</li>';
 }
@@ -365,14 +436,18 @@ function cardHTML(c) {
   var rows = rated(c);
   var meetings = list(c['Section Details']).map(esc).join('<br>') || 'No meeting time listed';
   var desc = c._desc.length ? c._desc.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('\n') : '<p>No description.</p>';
-  return '<details class="course" data-id="' + esc(c.workday_id) + '">' +
+  var pat = c._pattern;
+  return '<details class="course" data-id="' + esc(c.workday_id) + '" data-pattern="' + esc(pat) + '">' +
     '<summary><span class="sum-main">' +
       '<span class="sum-title"><span class="code">' + esc(c._code) + '</span> <span class="title">' + esc(c._title) + '</span></span>' +
-      '<span class="meta"><span class="pill ' + (STATUS.has(status) ? status : 'Other') + '">' + esc(status || 'Unknown') + '</span>' + meta + '</span>' +
+      '<span class="meta"><span class="pill ' + (STATUS.has(status) ? status : 'Other') + '">' + esc(status || 'Unknown') + '</span>' +
+        '<span class="pattern">' + esc(pat === 'none' ? NO_MEETING : pat) + '</span> · ' + meta + '</span>' +
       (rows.length ? '<span class="chips">' + rows.map(chipHTML).join('') + '</span>' : '') +
     '</span><span class="marker" aria-hidden="true"></span></summary>' +
     '<div class="card-body">' +
       '<p class="when">' + meetings + '</p>' +
+      (pat !== 'none' ? '<p class="meta">Meeting pattern: ' + esc(patternLabel(pat)) +
+        (pat.indexOf(' + ') >= 0 ? ' (separate meetings, not merged)' : '') + '</p>' : '') +
       (c['Cross-Listed Title'] ? '<p class="meta">Cross-listed: ' + esc(c['Cross-Listed Title']) + '</p>' : '') +
       (c['Inventory Owner'] ? '<p class="meta">Department: ' + esc(c['Inventory Owner']) + '</p>' : '') +
       (rows.length ? rmpBlockHTML(rows) : '') +
@@ -383,26 +458,45 @@ function cardHTML(c) {
 
 function filtersActive() {
   return $('q').value.trim() !== '' || $('subject').value !== '' || $('tag').value !== '' ||
-         $('day').value !== '' || $('open').checked;
+         $('day').value !== '' || $('pattern').value !== '' || $('open').checked;
+}
+
+function el(tag, cls, text) { var e = document.createElement(tag); e.className = cls; if (text != null) e.textContent = text; return e; }
+function groupNodes(hits) {
+  var by = new Map();
+  hits.forEach(function (c) { if (!by.has(c._pattern)) by.set(c._pattern, []); by.get(c._pattern).push(c._el); });
+  return PATTERN_ORDER.filter(function (k) { return by.has(k); }).map(function (k, i) {
+    var cards = by.get(k), sec = el('section', 'group'), h = el('h3', 'group-head');
+    h.id = 'gh-' + i;
+    sec.setAttribute('aria-labelledby', h.id);
+    h.append(el('span', 'group-key', k === 'none' ? NO_MEETING : k));
+    if (k !== 'none') h.append(el('span', 'group-days', patternDays(k)));
+    h.append(el('span', 'group-n', cards.length + ' section' + (cards.length === 1 ? '' : 's')));
+    sec.append.apply(sec, [h].concat(cards));
+    return sec;
+  });
 }
 
 // Cards are built once; filtering only moves existing nodes (no re-parsing, open cards stay open).
 function render() {
   if (!ready) return;
   var q = $('q').value.trim().toLowerCase(), subj = $('subject').value, tag = $('tag').value,
-      day = $('day').value, openOnly = $('open').checked;
+      day = $('day').value, pat = $('pattern').value, openOnly = $('open').checked;
   var hits = courses.filter(function (c) {
     return (!subj || c.subject === subj) && (!tag || c._tags.includes(tag)) && (!day || c._days.includes(day)) &&
-           (!openOnly || c['Section Status'] === 'Open') && (!q || c._text.includes(q));
+           (!pat || c._pattern === pat) && (!openOnly || c['Section Status'] === 'Open') && (!q || c._text.includes(q));
   });
-  $('list').replaceChildren.apply($('list'), hits.map(function (c) { return c._el; }));
+  var nodes = $('group').value === 'pattern' ? groupNodes(hits) : hits.map(function (c) { return c._el; });
+  $('list').replaceChildren.apply($('list'), nodes);
   $('count').textContent = hits.length + ' of ' + courses.length + ' sections';
   $('clear').hidden = !filtersActive();
   $('empty').hidden = hits.length > 0;
 }
 
+// Clears the filters only; the Arrange view setting (#group) is kept.
 function clearFilters() {
-  $('q').value = ''; $('subject').value = ''; $('tag').value = ''; $('day').value = ''; $('open').checked = false;
+  $('q').value = ''; $('subject').value = ''; $('tag').value = ''; $('day').value = ''; $('pattern').value = '';
+  $('open').checked = false;
   render();
   $('q').focus();
 }
@@ -420,6 +514,10 @@ async function getJSON(url) {
   return r.json();
 }
 
+function disableControls() {
+  Array.from($('filters').elements).concat([$('group')]).forEach(function (x) { x.disabled = true; });
+}
+
 async function init() {
   // Ratings are optional: a failure is reported in #rmp-status and never blocks the course list.
   var ratings = getJSON(RMP).then(function (d) {
@@ -433,7 +531,12 @@ async function init() {
     if (!Array.isArray(data)) throw new Error('unexpected data format');
   } catch (e) {
     $('count').textContent = 'Could not load course data (' + DATA + '): ' + e.message + '. Please reload the page.';
-    Array.from($('filters').elements).forEach(function (el) { el.disabled = true; });
+    disableControls();
+    return;
+  }
+  if (!data.length) {
+    $('count').textContent = 'No course sections are available in the course data.';
+    disableControls();
     return;
   }
   var r = await ratings;
@@ -445,12 +548,16 @@ async function init() {
   $('term').textContent = String(built[0]?.['Starting Academic Period'] ?? '');
   fillSelect('subject', built.map(function (c) { return c.subject; }));
   fillSelect('tag', built.flatMap(function (c) { return c._tags; }));
+  PATTERN_ORDER = orderPatterns(built);
+  PATTERN_ORDER.forEach(function (k) { $('pattern').add(new Option(patternLabel(k), k)); });
   $('list').innerHTML = built.map(cardHTML).join('');
   Array.from($('list').children).forEach(function (el, i) { built[i]._el = el; });
   courses = built;
   $('filters').addEventListener('input', render);
   $('filters').addEventListener('change', render);
   $('filters').addEventListener('submit', function (e) { e.preventDefault(); });
+  $('group').addEventListener('input', render);
+  $('group').addEventListener('change', render);
   $('clear').addEventListener('click', clearFilters);
   $('empty-clear').addEventListener('click', clearFilters);
   ready = true;
