@@ -265,6 +265,7 @@
       <div><dt>Sections with a matched RateMyProfessors rating</dt><dd id="stat-rated">&hellip;</dd></div>
       <div><dt>Matched RateMyProfessors reviews <span class="sub">(of 1,467 imported)</span></dt><dd id="stat-reviews">&hellip;</dd></div>
     </dl>
+    <p id="landing-error" class="notice" role="alert" hidden></p>
     <p id="landing-rmp-status" class="notice" role="status" hidden></p>
     <form id="landing-search" class="hero-search" role="search" aria-label="Search the catalog">
       <label class="lbl" for="landing-q">Search the Fall course catalog</label>
@@ -622,14 +623,15 @@ function applyRoute(moveFocus) {
 }
 // ratingsOk = false: the ratings file failed to load, so the two RMP figures are unknown, not zero.
 // They show a dash (read as "unavailable") and the landing shows the RMP_FAILED notice; never "0" as fact.
+function unavailable(id) {
+  var dash = el('span', '', '—');
+  dash.setAttribute('aria-hidden', 'true');
+  $(id).replaceChildren(dash, el('span', 'sr-only', 'unavailable'));
+}
 function showStats(all, ratingsOk) {
   $('stat-sections').textContent = all.length.toLocaleString('en-US');
   if (!ratingsOk) {
-    ['stat-rated', 'stat-reviews'].forEach(function (id) {
-      var dash = el('span', '', '—');
-      dash.setAttribute('aria-hidden', 'true');
-      $(id).replaceChildren(dash, el('span', 'sr-only', 'unavailable'));
-    });
+    ['stat-rated', 'stat-reviews'].forEach(unavailable);
     return;
   }
   var reviewIds = new Set(), ratedSections = 0;
@@ -661,6 +663,16 @@ async function getJSON(url) {
 function disableControls() {
   Array.from($('filters').elements).concat([$('group')]).forEach(function (x) { x.disabled = true; });
 }
+// No usable course data: say so in the catalog (#count) AND on the landing (the default view), and
+// replace the landing's "..." placeholders so nothing appears to load forever.
+function dataFailed(msg) {
+  $('count').textContent = msg;
+  var a = $('landing-error');
+  a.hidden = false;
+  a.textContent = msg;
+  ['stat-sections', 'stat-rated', 'stat-reviews'].forEach(unavailable);
+  disableControls();
+}
 
 async function init() {
   // Ratings are optional: a failure is reported in #rmp-status and never blocks the course list.
@@ -674,13 +686,11 @@ async function init() {
     data = await getJSON(DATA);
     if (!Array.isArray(data)) throw new Error('unexpected data format');
   } catch (e) {
-    $('count').textContent = 'Could not load course data (' + DATA + '): ' + e.message + '. Please reload the page.';
-    disableControls();
+    dataFailed('Could not load course data (' + DATA + '): ' + e.message + '. Please reload the page.');
     return;
   }
   if (!data.length) {
-    $('count').textContent = 'No course sections are available in the course data.';
-    disableControls();
+    dataFailed('No course sections are available in the course data.');
     return;
   }
   var r = await ratings;
