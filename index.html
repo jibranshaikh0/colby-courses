@@ -346,7 +346,7 @@
 
 <footer class="wrap site-footer">
   <div class="footer-inner">
-    <p>Made by Jibran Shaikh and Samir Dhami, Colby College.</p>
+    <p>Made by Jibran Shaikh and Samir Dhami, Colby College, and Humza Sehbai.</p>
     <p>With humble thanks to <a href="https://repose.herakraft.co">Repose</a>, Colby Hacker, and
       <a href="https://claude.ai">Claude</a>.
       Open source on <a href="https://github.com/jibranshaikh0/colby-courses">GitHub</a>.</p>
@@ -483,6 +483,9 @@ function normalize(c, rmpById) {
   var instructors = list(c.Instructors).map(String).filter(Boolean);
   var code = String((c.subject ?? '') + (c.number ?? '')).toUpperCase().replace(/[^A-Z0-9]/g, '');
   var rmp = rmpById.get(String(c.workday_id));
+  var head = cut >= 0 ? section.slice(0, cut) : section;
+  var dash = head.lastIndexOf('-');
+  var digits = String(c.number ?? '').match(/\d+/);
   return Object.assign({}, c, {
     _pattern: patternKey(c),
     _code: cut >= 0 ? section.slice(0, cut) : section,
@@ -491,6 +494,9 @@ function normalize(c, rmpById) {
     _instructors: instructors,
     _tags: list(c['Course Tags']).map(String).filter(Boolean),
     _rmp: rmp && rmp.course_code === code ? rmp : undefined,
+    _courseCode: (String(c.subject ?? '') + (digits ? digits[0] : '')).toUpperCase().replace(/[^A-Z0-9]/g, ''),
+    _sectionLetter: dash >= 0 ? head.slice(dash + 1).trim().toUpperCase() : '',
+    _isLab: / L-/.test(head),
     _text: [section, instructors.join(' '), desc.join(' '), c['Inventory Owner'] ?? ''].join(' ').toLowerCase()
   });
 }
@@ -586,9 +592,20 @@ function groupNodes(hits) {
 function render() {
   var q = $('q').value.trim().toLowerCase(), subj = $('subject').value, tag = $('tag').value,
       pat = $('pattern').value, openOnly = $('open').checked, ratedOnly = $('rated').checked;
+  // A query shaped like a course code (e.g. cs231, CS 231-A, cs231l, CS 231 L-A) matches by course code, not free text.
+  var m = q.match(/^([a-z]{1,4})\s*(\d{3})(?:[\s-]*(l[\s-]*[a-z]|[a-z]))?$/);
+  var codeQ = m ? (m[1] + m[2]).toUpperCase() : '', tok = m && m[3] ? m[3].replace(/[\s-]/g, '').toUpperCase() : '';
+  // tok: 'A' = lecture letter; 'L' = any lab or a real section L; 'LA' = lab section A.
+  function letterOk(c) {
+    if (!tok) return true;
+    if (tok === 'L') return c._isLab || c._sectionLetter === 'L';
+    if (tok.length === 2) return c._isLab && c._sectionLetter === tok[1];
+    return !c._isLab && c._sectionLetter === tok;
+  }
   var hits = courses.filter(function (c) {
+    var textOk = m ? c._courseCode === codeQ && letterOk(c) : c._text.includes(q);
     return (!subj || c.subject === subj) && (!tag || c._tags.includes(tag)) && (!pat || c._pattern === pat) &&
-           (!openOnly || c['Section Status'] === 'Open') && (!ratedOnly || c._rated) && (!q || c._text.includes(q));
+           (!openOnly || c['Section Status'] === 'Open') && (!ratedOnly || c._rated) && (!q || textOk);
   });
   var nodes = $('group').value === 'pattern' ? groupNodes(hits) : hits.map(function (c) { return c._el; });
   $('list').replaceChildren.apply($('list'), nodes);
