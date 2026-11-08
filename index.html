@@ -267,6 +267,24 @@ var STATUS = new Set(['Open', 'Waitlist', 'Closed']);
 var NO_MEETING = 'No meeting time listed';
 var DAY_ORDER = 'MTWRFSU';
 var DAY_NAME = { M: 'Mon', T: 'Tue', W: 'Wed', R: 'Thu', F: 'Fri', S: 'Sat', U: 'Sun' };
+// Subject names copied verbatim from the official Colby College Catalogue 2024-2025, table
+// "Two-Letter Abbreviations for Course Subject Areas" (colby.edu/wp-content/uploads/2024/07/Course-Catalogue-2024-25.pdf).
+// Codes not in that table (AI, CE, ER, HL, PO, TL in Fall 2026) are shown as bare codes, never guessed.
+var SUBJECT_NAMES = {
+  AA: "African-American Studies", AM: "American Studies", AN: "Ancient History", AR: "Art",
+  AS: "Astronomy", AY: "Anthropology", BC: "Biochemistry", BI: "Biology",
+  CH: "Chemistry", CI: "Cinema Studies", CL: "Classics", CN: "Chinese",
+  CS: "Computer Science", EA: "East Asian Studies", EC: "Economics", ED: "Education",
+  EN: "English", ES: "Environmental Studies", FR: "French", GE: "Geology",
+  GK: "Greek", GM: "German", GO: "Government", GS: "Global Studies",
+  HI: "History", IM: "Independent Major", IS: "Integrated Studies", IT: "Italian",
+  JA: "Japanese", JP: "January Courses", JS: "Jewish Studies", LA: "Latin American Studies",
+  LT: "Latin", MA: "Mathematics", ML: "Modern Languages (Arabic)", MU: "Music",
+  PH: "Physics", PL: "Philosophy", PS: "Psychology", RE: "Religious Studies",
+  RU: "Russian", SC: "Statistics", SO: "Sociology", SP: "Spanish",
+  SR: "Senior Scholar", ST: "Science, Technology, and Society", TD: "Performance, Theater, and Dance", WD: "Writing Department",
+  WG: "Women’s, Gender, & Sexuality Studies"
+};
 var PATTERN_ORDER = [];
 var courses = [];
 
@@ -486,11 +504,14 @@ function clearFilters() {
   $('q').focus();
 }
 
-function fillSelect(id, values) {
+function fillSelect(id, values, label) {
   var sel = $(id);
   Array.from(new Set(values.filter(function (v) { return v != null && v !== ''; }).map(String)))
     .sort(function (a, b) { return a.localeCompare(b); })
-    .forEach(function (v) { sel.add(new Option(v, v)); });
+    .forEach(function (v) { sel.add(new Option(label ? label(v) : v, v)); });
+}
+function subjectLabel(code) {
+  return Object.prototype.hasOwnProperty.call(SUBJECT_NAMES, code) ? code + ': ' + SUBJECT_NAMES[code] : code;
 }
 
 async function getJSON(url) {
@@ -531,7 +552,7 @@ async function init() {
   // Everything below is synchronous: data, list and listeners become ready in one tick.
   var built = data.filter(function (c) { return c && typeof c === 'object'; }).map(function (c) { return normalize(c, rmpById); });
   $('term').textContent = String(built[0]?.['Starting Academic Period'] ?? '');
-  fillSelect('subject', built.map(function (c) { return c.subject; }));
+  fillSelect('subject', built.map(function (c) { return c.subject; }), subjectLabel);
   fillSelect('tag', built.flatMap(function (c) { return c._tags; }));
   PATTERN_ORDER = orderPatterns(built);
   PATTERN_ORDER.forEach(function (k) { $('pattern').add(new Option(patternLabel(k), k)); });
