@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="994" viewBox="0 0 800 994" role="img" aria-labelledby="t d" font-family="system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif">
+<title id="t">Commit history of jibranshaikh0/colby-courses</title>
+<desc id="d">Linear history of 30 commits on main, oldest at top, newest (ef61adb) at bottom.</desc>
+<rect width="800" height="994" fill="#ffffff"/>
+<text x="24" y="32" font-size="18" font-weight="700" fill="#0f172a">Commit history: jibranshaikh0/colby-courses</text>
+<text x="24" y="54" font-size="12" fill="#475569">Linear, 30 commits, oldest at top. Snapshot of main ef61adb (2026-11-08), before the search/footer update (080ee02).</text>
+<line x1="36" y1="84" x2="36" y2="954" stroke="#2563eb" stroke-width="3"/>
+<circle cx="36" cy="84" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="88" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">7c141bd</text>
+<text x="124" y="88" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-07</text>
+<text x="210" y="88" font-size="12.5" fill="#0f172a">Colby course browser MVP with Workday Fall 2026 data</text>
+<circle cx="36" cy="114" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="118" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">04c5c17</text>
+<text x="124" y="118" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-07</text>
+<text x="210" y="118" font-size="12.5" fill="#0f172a">Add makers and acknowledgements</text>
+<circle cx="36" cy="144" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="148" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">ac340ea</text>
+<text x="124" y="148" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="148" font-size="12.5" fill="#0f172a">Add per-professor-course RateMyProfessors ratings</text>
+<circle cx="36" cy="174" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="178" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">eb4840b</text>
+<text x="124" y="178" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="178" font-size="12.5" fill="#0f172a">Add persisted ui-ux-pro-max design system (MASTER.md)</text>
+<circle cx="36" cy="204" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="208" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">97dc33c</text>
+<text x="124" y="208" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="208" font-size="12.5" fill="#0f172a">Harden RMP build script (no output change)</text>
+<circle cx="36" cy="234" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="238" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">f37954c</text>
+<text x="124" y="238" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="238" font-size="12.5" fill="#0f172a">Fix RMP matching for lab/suffix course codes (110 -&gt; 113 sections)</text>
+<circle cx="36" cy="264" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="268" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">fef0b1d</text>
+<text x="124" y="268" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="268" font-size="12.5" fill="#0f172a">Try every multi-word last-name suffix in the RMP matcher</text>
+<circle cx="36" cy="294" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="298" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">500ea83</text>
+<text x="124" y="298" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="298" font-size="12.5" fill="#0f172a">Normalize whitespace in RMP display names</text>
+<circle cx="36" cy="324" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="328" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">b16f9f2</text>
+<text x="124" y="328" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="328" font-size="12.5" fill="#0f172a">Correct RMP enrichment README to match the code and data</text>
+<circle cx="36" cy="354" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="358" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">8e8bb52</text>
+<text x="124" y="358" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="358" font-size="12.5" fill="#0f172a">Re-implement the UI in Claude Code on the ui-ux-pro-max design system</text>
+<circle cx="36" cy="384" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="388" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">376b0fe</text>
+<text x="124" y="388" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="388" font-size="12.5" fill="#0f172a">Document the RMP coverage delta 110 -&gt; 113 as a traced fix</text>
+<circle cx="36" cy="414" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="418" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">f850f43</text>
+<text x="124" y="418" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="418" font-size="12.5" fill="#0f172a">Add meeting-pattern filter and grouping; harden ratings attachment</text>
+<circle cx="36" cy="444" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="448" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">a545bab</text>
+<text x="124" y="448" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="448" font-size="12.5" fill="#0f172a">Apply non-conflicting /ponytail-audit findings</text>
+<circle cx="36" cy="474" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="478" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">2c6f913</text>
+<text x="124" y="478" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="478" font-size="12.5" fill="#0f172a">Remove redundant "Meets on" control; keep the exact meeting-pattern filter</text>
+<circle cx="36" cy="504" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="508" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">7562951</text>
+<text x="124" y="508" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="508" font-size="12.5" fill="#0f172a">Show official subject names in the Subject dropdown ("CODE: Name")</text>
+<circle cx="36" cy="534" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="538" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">3ea9cef</text>
+<text x="124" y="538" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="538" font-size="12.5" fill="#0f172a">Add a landing view (LayupList-style) that routes into the real catalog</text>
+<circle cx="36" cy="564" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="568" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">2edaa2b</text>
+<text x="124" y="568" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="568" font-size="12.5" fill="#0f172a">Use the group-supplied photo as the landing background</text>
+<circle cx="36" cy="594" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="598" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">de756f3</text>
+<text x="124" y="598" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="598" font-size="12.5" fill="#0f172a">Add OVERNIGHT_HANDOFF.md: blocked/not review-ready status and unblock path</text>
+<circle cx="36" cy="624" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="628" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">443709a</text>
+<text x="124" y="628" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="628" font-size="12.5" fill="#0f172a">Correct and extend subject labels; document provenance in subject-names.md</text>
+<circle cx="36" cy="654" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="658" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">39d33c9</text>
+<text x="124" y="658" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="658" font-size="12.5" fill="#0f172a">Replace the portrait landing background with the campus lawn/tower photo</text>
+<circle cx="36" cy="684" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="688" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">74f9232</text>
+<text x="124" y="688" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="688" font-size="12.5" fill="#0f172a">Show RMP stats as unavailable, not 0, when the ratings file fails</text>
+<circle cx="36" cy="714" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="718" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">6e179cf</text>
+<text x="124" y="718" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="718" font-size="12.5" fill="#0f172a">Show course-data load failures on the landing view, not only the catalog</text>
+<circle cx="36" cy="744" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="748" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">5f643a4</text>
+<text x="124" y="748" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="748" font-size="12.5" fill="#0f172a">README: describe the exact meeting-pattern filter, not a day filter</text>
+<circle cx="36" cy="774" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="778" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">0ad7f1a</text>
+<text x="124" y="778" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="778" font-size="12.5" fill="#0f172a">Create CNAME</text>
+<circle cx="36" cy="804" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="808" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">d92823e</text>
+<text x="124" y="808" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="808" font-size="12.5" fill="#0f172a">Stage reviewed mule branding assets before exact-path renames</text>
+<circle cx="36" cy="834" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="838" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">8fda2f4</text>
+<text x="124" y="838" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="838" font-size="12.5" fill="#0f172a">Rename 1-og-image.png to og-image.png</text>
+<circle cx="36" cy="864" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="868" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">b01dc7d</text>
+<text x="124" y="868" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="868" font-size="12.5" fill="#0f172a">Rename 2-apple-touch-icon.png to apple-touch-icon.png</text>
+<circle cx="36" cy="894" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="898" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">ba1cfae</text>
+<text x="124" y="898" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="898" font-size="12.5" fill="#0f172a">Rename 3-favicon-32x32.png to favicon-32x32.png</text>
+<circle cx="36" cy="924" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="928" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">da76c6c</text>
+<text x="124" y="928" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="928" font-size="12.5" fill="#0f172a">Rename staged SVG to its exact favicon path</text>
+<circle cx="36" cy="954" r="6" fill="#2563eb" stroke="#2563eb" stroke-width="3"/>
+<text x="58" y="958" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" font-weight="700" fill="#1d4ed8">ef61adb</text>
+<text x="124" y="958" font-size="12" font-family="ui-monospace,Menlo,Consolas,monospace" fill="#475569">2026-11-08</text>
+<text x="210" y="958" font-size="12.5" fill="#0f172a">Activate Rate A Mule hero and link-preview metadata &lt;- main</text>
+</svg>
