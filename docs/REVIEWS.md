@@ -35,15 +35,20 @@ The full plan lives with the owning account; this file records the decisions bak
 
 - Public view never exposes user_id or email.
 - A user's first review is `pending` until a moderator approves it; later reviews
-  publish immediately. Users can never set their own status or role.
+  publish immediately. Users can never set their own status or role. (Mock: these
+  rules are enforced by the mock adapter's code only; localStorage is user-editable,
+  and `moderate` is exposed on the client adapter for preview. The real backend must
+  enforce them server-side and keep moderation off the client adapter.)
 - Report flow: 3 distinct reporters auto-hide a review until moderation.
-- User text is rendered with `textContent` only; `innerHTML` is banned in `reviews/`.
+- User text is rendered with `textContent` only; `innerHTML` is banned in `reviews/`
+  (checked by a test that greps the directory).
 
 ## Local preview
 
 Serve the repo root (`python3 -m http.server`) and open the catalog with
 `?reviewsPreview=1` appended, e.g. `http://localhost:8000/?reviewsPreview=1#/catalog`.
-The query flag exists for local preview only and must be removed before shipping.
+The query flag is honored ONLY on localhost/127.0.0.1, so it can never enable the mock
+UI on the public site; removing it before shipping is still required.
 
 ## Tests
 

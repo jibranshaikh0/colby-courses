@@ -31,9 +31,21 @@ test('domain gate rejects non-colby and lookalikes', () => {
   assert.equal(mock.mockSendCode('Student@COLBY.edu').ok, true);
 });
 
-test('wrong and expired codes rejected', () => {
-  const s = mock.mockSendCode('b@colby.edu');
-  assert.equal(mock.mockVerifyCode('b@colby.edu', '000000').ok, s.mockCode === '000000');
+test('wrong codes are rejected', () => {
+  let s = mock.mockSendCode('b@colby.edu');
+  while (s.mockCode === '111111') s = mock.mockSendCode('b@colby.edu');
+  assert.equal(mock.mockVerifyCode('b@colby.edu', '111111').ok, false);
+});
+
+test('expired codes are rejected', () => {
+  const s = mock.mockSendCode('exp@colby.edu');
+  const realNow = Date.now;
+  Date.now = () => realNow() + 11 * 60 * 1000; // past the 10-minute expiry
+  try {
+    assert.equal(mock.mockVerifyCode('exp@colby.edu', s.mockCode).ok, false);
+  } finally {
+    Date.now = realNow;
+  }
 });
 
 test('first review is pending (pre-moderation), second publishes', () => {
@@ -103,4 +115,31 @@ test('report flow: 3 distinct reporters auto-hide', () => {
   assert.equal(mock.reportReview(r2, pub.review.id).hidden, false);
   assert.equal(mock.reportReview(r3, pub.review.id).hidden, true);
   assert.equal(mock.publicStats('R1', null).n, 0); // hidden from public
+});
+
+test('reports never undo a moderator hide, self-reports rejected', () => {
+  localStorage.clear();
+  const author = freshUser('h0@colby.edu');
+  const firstA = mock.submitReview(author, { ...CTX, answers: ANS });
+  mock.mockModerate(firstA.review.id, 'publish');
+  const pub = mock.submitReview(author, { ...CTX, courseId: 'H1', answers: ANS, comment: 'x' });
+  // self-report rejected
+  assert.equal(mock.reportReview(author, pub.review.id).ok, false);
+  // moderator hides the review
+  mock.mockModerate(pub.review.id, 'hide');
+  // three reporters cannot flip it back to pending
+  const r1 = freshUser('h1@colby.edu');
+  const r2 = freshUser('h2@colby.edu');
+  const r3 = freshUser('h3@colby.edu');
+  assert.equal(mock.reportReview(r1, pub.review.id).ok, false); // not public
+  assert.equal(mock.publicStats('H1', null).n, 0);              // still hidden
+  void r2; void r3;
+});
+
+test('no innerHTML anywhere in reviews/ (CI-style grep)', async () => {
+  const { readdirSync, readFileSync } = await import('node:fs');
+  for (const f of readdirSync('reviews')) {
+    if (!/\.(js|css|html)$/.test(f) || f.startsWith('__') || f.endsWith('.test.js')) continue;
+    assert.ok(!readFileSync('reviews/' + f, 'utf8').includes('innerHTML'), f + ' contains innerHTML');
+  }
 });

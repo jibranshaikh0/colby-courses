@@ -43,6 +43,7 @@ test('aggregate gates below minN and averages above it', () => {
 test('formatScore', () => {
   assert.equal(formatScore(0.35), '+0.35');
   assert.equal(formatScore(-0.5), '-0.50');
-  assert.equal(formatScore(0), '+0.00');
+  assert.equal(formatScore(0), '0.00');
+  assert.equal(formatScore(-0.002), '0.00'); // no "-0.00" display
   assert.equal(formatScore(null), 'n/a');
 });
