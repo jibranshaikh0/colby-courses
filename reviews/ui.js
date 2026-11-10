@@ -1,6 +1,7 @@
 // Student reviews UI. User-generated content is rendered with textContent only -
 // never innerHTML - so review text cannot inject markup.
 import { QUESTIONS, FOOTNOTE } from './survey.js';
+import { MIN_REVIEWS_FOR_DISPLAY } from './config.js';
 import { formatScore } from './score.js';
 import { backend } from './api.js';
 
@@ -32,10 +33,10 @@ function render(root, ctx) {
     box.appendChild(el('p', 'sr-none', 'No student reviews yet.'));
   } else if (stats.gated) {
     box.appendChild(el('p', 'sr-gate', stats.n + ' student review' + (stats.n === 1 ? '' : 's') +
-      ' - scores and comments appear once 5 are published.'));
+      ' - scores and comments appear once ' + MIN_REVIEWS_FOR_DISPLAY + ' are published.'));
   } else {
     const line = el('p', 'sr-score');
-    line.appendChild(el('span', 'sr-value', 'Score: ' + formatScore(stats.score)));
+    line.appendChild(el('span', 'sr-value', 'Student score: ' + formatScore(stats.score)));
     line.appendChild(document.createTextNode(' (easier \u2191 / harder \u2193)  n = ' + stats.n + ' reviews '));
     if (stats.limited) line.appendChild(el('span', 'sr-limited', 'Limited data'));
     box.appendChild(line);
@@ -131,10 +132,20 @@ function buildForm(root, ctx, user) {
   const comment = el('textarea', 'sr-textarea'); comment.maxLength = 1500;
   comment.placeholder = 'Optional short comment (max 1500 chars)';
   form.appendChild(comment);
+  const termWrap = el('label', 'sr-term-pick');
+  termWrap.appendChild(el('span', 'sr-label', 'Term you took the course: '));
+  const termSel = el('select', 'sr-input');
+  for (const t of ['Fall 2026', 'Spring 2026', 'Fall 2025', 'Spring 2025', 'Earlier']) {
+    const o = el('option', null, t); o.value = t;
+    if (t === ctx.term) o.selected = true;
+    termSel.appendChild(o);
+  }
+  termWrap.appendChild(termSel);
+  form.appendChild(termWrap);
   const attest = el('label', 'sr-attest');
   const cb = el('input'); cb.type = 'checkbox';
   attest.appendChild(cb);
-  attest.appendChild(el('span', null, ' I took this course in ' + ctx.term + '.'));
+  attest.appendChild(el('span', null, ' I took this course in the term selected above.'));
   form.appendChild(attest);
   const msg = el('p', 'sr-msg');
   const submit = el('button', 'sr-btn', 'Submit review'); submit.type = 'button';
@@ -142,7 +153,7 @@ function buildForm(root, ctx, user) {
     msg.textContent = '';
     if (!cb.checked) { msg.textContent = 'Please confirm you took this course.'; return; }
     const r = backend.submitReview(user, {
-      courseId: ctx.courseId, instructorId: ctx.instructorId, term: ctx.term,
+      courseId: ctx.courseId, instructorId: ctx.instructorId, term: termSel.value,
       answers, comment: comment.value,
     });
     if (!r.ok) { msg.textContent = r.errors.join(' '); return; }

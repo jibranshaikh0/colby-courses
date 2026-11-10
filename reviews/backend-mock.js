@@ -59,21 +59,26 @@ export function signOut() {
 
 // First-review pre-moderation, mirrored from the plan: a user's first review stays
 // 'pending' (visible only to them); later reviews publish immediately.
-export function submitReview(user, { courseId, instructorId = null, term, answers, comment = '' }) {
+export function submitReview(user, { courseId, instructorId = null, term, answers, comment } = {}) {
   const db = load();
-  const { ok, errors } = validateAnswers(answers, QUESTIONS);
+  const text = String(comment ?? '');
+  const cleanAnswers = {};
+  for (const q of QUESTIONS) {
+    if (answers && q.id in Object(answers)) cleanAnswers[q.id] = answers[q.id];
+  }
+  const { ok, errors } = validateAnswers(cleanAnswers, QUESTIONS);
   if (!ok) return { ok: false, errors };
-  if (comment.length > 1500) return { ok: false, errors: ['comment: too long (max 1500)'] };
+  if (text.length > 1500) return { ok: false, errors: ['comment: too long (max 1500)'] };
   const dupe = db.reviews.find((r) =>
     r.userId === user.id && r.courseId === courseId &&
     r.instructorId === instructorId && r.term === term && r.status !== 'deleted');
-  if (dupe) return { ok: false, errors: ['You already reviewed this course/instructor/term. Edit it instead.'] };
+  if (dupe) return { ok: false, errors: ['You already reviewed this course/instructor/term.'] };
   const hasPublished = db.reviews.some((r) => r.userId === user.id && r.status === 'published');
   const review = {
     id: 'r' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
     userId: user.id, courseId, instructorId, term,
     surveyVersion: SURVEY_VERSION,
-    answers: { ...answers }, comment: String(comment || ''),
+    answers: cleanAnswers, comment: text,
     score: reviewScore(answers, QUESTIONS),
     status: hasPublished ? 'published' : 'pending',
     createdAt: new Date().toISOString(),
@@ -124,12 +129,15 @@ export function reportReview(reporter, reviewId) {
   const db = load();
   const review = db.reviews.find((r) => r.id === reviewId);
   if (!review) return { ok: false, error: 'Review not found.' };
+  if (review.userId === reporter.id) return { ok: false, error: 'You cannot report your own review.' };
+  if (review.status !== 'published') return { ok: false, error: 'This review is not public.' };
   if (db.reports.some((x) => x.reviewId === reviewId && x.reporterId === reporter.id)) {
     return { ok: false, error: 'You already reported this review.' };
   }
   db.reports.push({ reviewId, reporterId: reporter.id, at: new Date().toISOString() });
   const distinct = new Set(db.reports.filter((x) => x.reviewId === reviewId).map((x) => x.reporterId));
-  if (distinct.size >= 3) review.status = 'pending'; // auto-hide until moderation
+  // Only a published review can be auto-hidden; a moderator's hide is never undone here.
+  if (distinct.size >= 3 && review.status === 'published') review.status = 'pending';
   save(db);
   return { ok: true, hidden: distinct.size >= 3 };
 }

@@ -47,5 +47,6 @@ export function aggregate(scores, minN = 5) {
 
 export function formatScore(s) {
   if (s === null || s === undefined) return 'n/a';
-  return (s >= 0 ? '+' : '') + s.toFixed(2);
+  if (Math.abs(s) < 0.005) return '0.00'; // matches index.html's zero guard
+  return (s > 0 ? '+' : '') + s.toFixed(2);
 }
