@@ -140,6 +140,7 @@ test('no innerHTML anywhere in reviews/ (CI-style grep)', async () => {
   const { readdirSync, readFileSync } = await import('node:fs');
   for (const f of readdirSync('reviews')) {
     if (!/\.(js|css|html)$/.test(f) || f.startsWith('__') || f.endsWith('.test.js')) continue;
-    assert.ok(!readFileSync('reviews/' + f, 'utf8').includes('innerHTML'), f + ' contains innerHTML');
+    // flag actual usage (.innerHTML = / +=), not the word in comments
+    assert.ok(!/\.innerHTML\s*\+?=/.test(readFileSync('reviews/' + f, 'utf8')), f + ' assigns innerHTML');
   }
 });
