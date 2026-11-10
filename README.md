@@ -1,7 +1,7 @@
 # Colby Courses
 
 A searchable browser for Colby College course sections, in the spirit of [Layup List](https://github.com/layuplist/layup-list).
-One static page (`index.html`) over a JSON file; no build step.
+One static page (`index.html`) over two JSON files (course sections and RateMyProfessors ratings); no build step.
 
 ## Run it
 
@@ -9,12 +9,23 @@ One static page (`index.html`) over a JSON file; no build step.
 python3 -m http.server 8080   # then open http://localhost:8080
 ```
 
-Filter by subject, course tag, meeting day and open seats, or search titles, instructors and descriptions.
+It opens on a landing page with a search box and links into the catalog. In the catalog, filter by
+subject, course tag and meeting pattern, show only open or only rated sections, group sections by
+meeting pattern, or search codes, titles, instructors, descriptions and departments. Type course
+codes with a space, as Workday writes them (`CS 151`, not `CS151`).
+
+The meeting-pattern filter matches a section's full weekly pattern exactly. `MWF` lists sections
+that meet on Monday, Wednesday and Friday and on no other day. A section with several meetings has
+its own combined pattern (a `MWF` lecture with an `R` lab is `MWF + R`), which is never merged into a
+single day set. Sections without a listed time are under "No meeting time listed". There is no
+"meets on a given day" filter: by design, the exact pattern filter replaced it.
 
 ## Data
 
 `data/courses-fall2026.json` holds every Fall 2026 section from Workday's
 **Find Course Sections for Registration** report (861 sections).
+`data/rmp-course-ratings-fall2026.json` holds the RateMyProfessors ratings, matched per professor
+and per course; `data/RMP-ENRICHMENT-README.md` explains how it is built and refreshed.
 
 To refresh it or add a term (needs a Colby Workday login):
 

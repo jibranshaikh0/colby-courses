@@ -6,13 +6,20 @@ Inputs (bundled in this directory, fetched 2026-11-08 from the public RMP GraphQ
 endpoint https://www.ratemyprofessors.com/graphql):
   - courses-fall2026.json   (repo data file: Fall 2026 sections from Colby Workday)
   - rmp_teachers.json       (raw GraphQL response: all Colby College teachers, school id U2Nob29sLTI1MA==)
-  - rmp_reviews.json        (raw GraphQL responses: every review for every matched teacher)
+  - rmp_reviews.json        (raw GraphQL responses: reviews for candidate teachers; this is a
+                             REDUCED snapshot, see RMP-ENRICHMENT-README.md - `--fetch` pulls the full set)
 
 Run `python3 build_rmp_enrichment.py` -> writes rmp-course-ratings-fall2026.json.
 Run `python3 build_rmp_enrichment.py --fetch` to re-pull raw inputs from RMP (network).
+Paths resolve relative to this script, so it can be run from any directory.
 """
-import json, re, sys, time, unicodedata, urllib.request
-from collections import defaultdict
+import json, os, re, sys, time, unicodedata, urllib.error, urllib.request
+from collections import Counter, defaultdict
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+def path(name):
+    return os.path.join(HERE, name)
 
 GRAPHQL = 'https://www.ratemyprofessors.com/graphql'
 SCHOOL_ID = 'U2Nob29sLTI1MA=='  # Colby College (Waterville, ME), legacyId 250
@@ -43,45 +50,68 @@ NICK = {'abby':'abigail','alex':'alexander','andy':'andrew','ben':'benjamin','be
         'nate':'nathaniel','phil':'philip','rick':'richard','rob':'robert','ron':'ronald',
         'ted':'theodore','tim':'timothy','walt':'walter'}
 
-def post(payload):
+def post(payload, attempts=3):
+    # 'Basic dGVzdDp0ZXN0' is base64("test:test"): the static header RMP's own public web
+    # client sends with every GraphQL request. It is not a credential or a secret.
     req = urllib.request.Request(GRAPHQL, data=json.dumps(payload).encode(),
         headers={'Content-Type':'application/json','Authorization':'Basic dGVzdDp0ZXN0',
                  'User-Agent':'Mozilla/5.0'})
-    return json.load(urllib.request.urlopen(req, timeout=30))
+    for attempt in range(1, attempts + 1):
+        try:
+            d = json.load(urllib.request.urlopen(req, timeout=30))
+            if not isinstance(d, dict) or d.get('errors') or not isinstance(d.get('data'), dict):
+                raise ValueError(f'unexpected GraphQL response: {str(d)[:200]}')
+            return d
+        except (urllib.error.URLError, TimeoutError, ValueError) as e:
+            if attempt == attempts:
+                raise
+            print(f'retry {attempt}/{attempts - 1} after: {e}', file=sys.stderr)
+            time.sleep(2 * attempt)
 
 def fetch():
+    """Download raw inputs. Nothing is written until every request has succeeded, so a failed
+    refresh can never leave a new teacher list next to an old, smaller review set."""
     d = post({'query': TEACHER_LIST_QUERY,
               'variables': {'query': {'text': '', 'schoolID': SCHOOL_ID, 'fallback': True, 'departmentID': None}}})
     teachers = [e['node'] for e in d['data']['search']['teachers']['edges']]
-    json.dump(d, open('rmp_teachers.json','w'))
     reviews = {}
     for i, t in enumerate(teachers):
         cursor = None; allr = []
         while True:
             r = post({'query': RATINGS_QUERY, 'variables': {'id': t['id'], 'cursor': cursor}})
-            node = r['data']['node']; rr = node['ratings']
+            node = r['data'].get('node')
+            if not node or not node.get('ratings'):
+                sys.exit(f"RMP returned no ratings for teacher {t['id']}; nothing was written")
+            rr = node['ratings']
             allr += [e['node'] for e in rr['edges']]
             if rr['pageInfo']['hasNextPage']: cursor = rr['pageInfo']['endCursor']
             else: break
         reviews[f"{t['firstName']} {t['lastName']}|{t['id']}"] = allr
         if i % 25 == 0: print('fetched', i)
         time.sleep(0.15)
-    json.dump(reviews, open('rmp_reviews.json','w'))
+    with open(path('rmp_teachers.json'), 'w', encoding='utf-8') as f:
+        json.dump(d, f)
+    with open(path('rmp_reviews.json'), 'w', encoding='utf-8') as f:
+        json.dump(reviews, f)
 
 def norm(s):
-    s = unicodedata.normalize('NFKD', s).encode('ascii','ignore').decode()
+    s = unicodedata.normalize('NFKD', s or '').encode('ascii','ignore').decode()
     return re.sub(r'[^a-z ]','', s.lower()).strip()
+
+def first_token(s):
+    t = norm(s).split()
+    return t[0] if t else None
 
 def norm_class(s):
     return re.sub(r'[^A-Z0-9]','', (s or '').upper())
 
-def build():
-    courses = json.load(open('courses-fall2026.json'))
-    teachers = [e['node'] for e in json.load(open('rmp_teachers.json'))['data']['search']['teachers']['edges']]
-    raw_reviews = json.load(open('rmp_reviews.json'))
+def wd_code(c):
+    """Workday course code under the SAME normalization as RMP class strings.
+    Workday numbers can carry a space ("BI" + "163 L"); without this, exact codes such as
+    BI163L could never match. Suffix letters are kept: BI163L stays distinct from BI163."""
+    return norm_class(c['subject'] + c['number'])
 
-    valid = set((c['subject'] + c['number']).upper() for c in courses)
-
+def make_resolver(valid):
     def resolve_class(raw):
         """Normalize; only alias applied is BIOxxx -> BIxxx when the long form is NOT a
         Fall-2026 code and the short form IS (RMP writes Biology as BIO, Workday as BI)."""
@@ -90,31 +120,55 @@ def build():
         if code.startswith('BIO') and code[3:].isdigit() and ('BI' + code[3:]) in valid:
             return 'BI' + code[3:]
         return None
+    return resolve_class
 
-    # index RMP teachers by full normalized last name
+def index_by_last(teachers):
+    """RMP teachers indexed by full normalized last name."""
     by_last = defaultdict(list)
     for t in teachers:
         by_last[norm(t['lastName'])].append(t)
+    return by_last
 
+def make_matcher(by_last):
     def match(name):
         """Strict: exact full first-token equality (nickname map allowed) + exact last name.
-        Multi-word last names tried longest-first. Anything less is excluded, never guessed."""
+        Every multi-word last-name suffix is tried, longest first ("arnout van der meer" tries
+        "van der meer", "der meer", "meer"); the first one RMP knows is used. The final
+        single-token fallback covers middle names/initials. Anything less is excluded, never guessed."""
         n = norm(name)
         if not n or n in ('staff','tbd','faculty'): return None, 'not-a-person'
         parts = n.split()
         first = parts[0]
-        keys = [' '.join(parts[-2:])] if len(parts) >= 3 else []
-        keys.append(parts[-1])
+        keys = [' '.join(parts[i:]) for i in range(1, len(parts))] or [parts[-1]]
         cands = []
         for k in keys:
             if k in by_last: cands = by_last[k]; break
         if not cands:
             return None, 'no-rmp-lastname'
         exact = [t for t in cands
-                 if norm(t['firstName']).split()[0] in (first, NICK.get(first, first))]
+                 if first_token(t['firstName']) in (first, NICK.get(first, first))]
         if len(exact) == 1: return exact[0], 'exact'
         if len(exact) > 1: return None, 'ambiguous-first-name'
         return None, 'lastname-only'
+    return match
+
+def build():
+    def load(name):
+        with open(path(name), encoding='utf-8') as f:
+            return json.load(f)
+    courses = load('courses-fall2026.json')
+    teachers = [e['node'] for e in load('rmp_teachers.json')['data']['search']['teachers']['edges']]
+    raw_reviews = load('rmp_reviews.json')
+
+    forms = defaultdict(set)
+    for c in courses:
+        forms[wd_code(c)].add((c['subject'] + c['number']).upper())
+    clash = {k: v for k, v in forms.items() if len(v) > 1}
+    if clash:
+        sys.exit(f'distinct Workday course codes collapse to one normalized code: {clash}')
+    valid = set(forms)
+    resolve_class = make_resolver(valid)
+    match = make_matcher(index_by_last(teachers))
 
     # attribute reviews to (workday instructor name, course code)
     teacher_by_rmpid = {t['id']: t for t in teachers}
@@ -122,17 +176,47 @@ def build():
     prof_info, excluded = {}, {}
     for name in instr_names:
         m, how = match(name)
-        if m: prof_info[name] = {'rmp_name': f"{m['firstName']} {m['lastName']}",
+        if m: prof_info[name] = {'rmp_name': ' '.join(f"{m.get('firstName') or ''} {m.get('lastName') or ''}".split()),
                                  'rmp_id': m['id'], 'department': m['department'], 'match_type': how}
         else: excluded[name] = how
+    strict_matches = len(prof_info)
 
+    # One RMP profile must map to exactly one Workday instructor; if two Workday names land on
+    # the same profile we cannot tell whose reviews they are, so both are excluded (never guessed).
+    by_rmpid = defaultdict(list)
+    for name, info in prof_info.items():
+        by_rmpid[info['rmp_id']].append(name)
+    for rid, names in by_rmpid.items():
+        if len(names) > 1:
+            for name in names:
+                excluded[name] = 'ambiguous-rmp-profile'
+                del prof_info[name]
+
+    # rmp_reviews.json is a reduced snapshot. A strict match whose reviews are not in it must not
+    # be reported as "0 reviews" (that would be a false claim), so it is excluded with that reason.
+    snap = defaultdict(list)
+    for key in raw_reviews:
+        snap[key.rsplit('|', 1)[1]].append(key)
+    dup_keys = {rid: keys for rid, keys in snap.items() if len(keys) > 1}
+    if dup_keys:
+        sys.exit(f'rmp_reviews.json has several keys for one RMP id (reviews would double count): {dup_keys}')
+    for name in [n for n, info in prof_info.items() if info['rmp_id'] not in snap]:
+        excluded[name] = 'reviews-not-in-snapshot'
+        del prof_info[name]
+    dup_review_ids = sum(len(rs) - len({r.get('id') for r in rs}) for rs in raw_reviews.values())
+
+    wd_by_rmpid = {info['rmp_id']: n for n, info in prof_info.items()}
     pair = defaultdict(list)
     for key, rs in raw_reviews.items():
         rmp_id = key.rsplit('|', 1)[1]
-        # find workday name for this rmp id
-        wd = next((n for n, info in prof_info.items() if info['rmp_id'] == rmp_id), None)
+        wd = wd_by_rmpid.get(rmp_id)
         if not wd: continue
+        seen = set()
         for r in rs:
+            rid = r.get('id')
+            if rid is not None:
+                if rid in seen: continue  # a review repeated across pages must count once
+                seen.add(rid)
             cc = resolve_class(r.get('class'))
             if cc: pair[(wd, cc)].append(r)
 
@@ -142,7 +226,7 @@ def build():
 
     enriched, sec_covered = [], 0
     for c in courses:
-        ccode = (c['subject'] + c['number']).upper()
+        ccode = wd_code(c)
         profs = []
         for name in (c.get('Instructors') or []):
             if name in excluded:
@@ -171,11 +255,22 @@ def build():
                          'course_code': ccode, 'professors': profs})
         if any(p.get('course_review_count', 0) > 0 for p in profs): sec_covered += 1
 
-    json.dump(enriched, open('rmp-course-ratings-fall2026.json','w'), indent=1)
+    with open(path('rmp-course-ratings-fall2026.json'), 'w', encoding='utf-8') as f:
+        json.dump(enriched, f, indent=1)
     fall = sum(len(v) for (n,cc),v in pair.items() if cc in valid)
-    print('matched instructors (strict exact):', len(prof_info))
-    print('excluded:', len(excluded))
-    print('pair reviews on Fall-2026 codes:', fall)
+    taught = {(n, wd_code(c)) for c in courses for n in (c.get('Instructors') or [])}
+    rated_pairs = {k: v for k, v in pair.items() if k in taught and v}
+    used_ids = {info['rmp_id'] for info in prof_info.values()}
+    print('unique Workday instructor names:', len(instr_names))
+    print('strict name matches:', strict_matches)
+    print('usable matches (strict, one-to-one, reviews in snapshot):', len(prof_info))
+    print('excluded:', len(excluded), dict(sorted(Counter(excluded.values()).items())))
+    print('RMP teachers in rmp_teachers.json:', len(teachers))
+    print('snapshot profiles / reviews in rmp_reviews.json:', len(raw_reviews), '/', sum(len(v) for v in raw_reviews.values()))
+    print('snapshot profiles not used by any usable match:', sum(1 for rid in snap if rid not in used_ids))
+    print('duplicate review ids inside snapshot profiles:', dup_review_ids)
+    print('usable-match reviews on any Fall-2026 course code:', fall)
+    print('rated professor-course pairs taught this term / their reviews:', len(rated_pairs), '/', sum(len(v) for v in rated_pairs.values()))
     print('sections with >=1 course-pair review:', sec_covered, '/', len(courses))
 
 if __name__ == '__main__':

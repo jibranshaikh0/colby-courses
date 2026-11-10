@@ -1980,7 +1980,7 @@
   "subject": "BC",
   "number": "367 L",
   "section_code": "A",
-  "course_code": "BC367 L",
+  "course_code": "BC367L",
   "professors": [
    {
     "name": "Vicky Hepburn",
@@ -1997,7 +1997,7 @@
   "subject": "BC",
   "number": "367 L",
   "section_code": "B",
-  "course_code": "BC367 L",
+  "course_code": "BC367L",
   "professors": [
    {
     "name": "Benedikt Blossom",
@@ -2014,7 +2014,7 @@
   "subject": "BC",
   "number": "367 L",
   "section_code": "C",
-  "course_code": "BC367 L",
+  "course_code": "BC367L",
   "professors": [
    {
     "name": "Benedikt Blossom",
@@ -2659,7 +2659,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "A1",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Serena Graham",
@@ -2667,16 +2667,37 @@
     "rmp_id": "VGVhY2hlci0yNzYzMjEx",
     "department": "Biology",
     "match_type": "exact",
-    "course_review_count": 0,
-    "avg_difficulty_1to5": null,
-    "difficulty_n": 0,
-    "avg_quality_1to5": null,
-    "quality_n": 0,
-    "would_take_again_pct": null,
-    "wta_n": 0,
-    "easiness_proxy": null,
+    "course_review_count": 2,
+    "avg_difficulty_1to5": 2.5,
+    "difficulty_n": 2,
+    "avg_quality_1to5": 4.0,
+    "quality_n": 2,
+    "would_take_again_pct": 50.0,
+    "wta_n": 2,
+    "easiness_proxy": 0.25,
     "easiness_proxy_note": "linear proxy (3-difficulty)/2 mapping RMP 1-5 to [-1,+1]; NOT a measured Dartmouth Layup List score",
-    "reviews": []
+    "reviews": [
+     {
+      "id": "UmF0aW5nLTM4MzcxNTI4",
+      "legacyId": 38371528,
+      "class": "BI163L",
+      "date": "2023-11-10 15:13:07 +0000 UTC",
+      "difficultyRating": 1,
+      "clarityRating": 5,
+      "wouldTakeAgain": 1,
+      "grade": ""
+     },
+     {
+      "id": "UmF0aW5nLTM1NzA2MTAx",
+      "legacyId": 35706101,
+      "class": "BI163L",
+      "date": "2022-01-05 22:45:41 +0000 UTC",
+      "difficultyRating": 4,
+      "clarityRating": 3,
+      "wouldTakeAgain": 0,
+      "grade": "Rather not say"
+     }
+    ]
    }
   ]
  },
@@ -2686,7 +2707,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "A2",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Josh Steele",
@@ -2703,7 +2724,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "B1",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Russell Johnson",
@@ -2730,7 +2751,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "B2",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Scott Guay",
@@ -2747,7 +2768,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "C1",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Josh Steele",
@@ -2764,7 +2785,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "C2",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Tina Beachy",
@@ -2781,7 +2802,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "D1",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Josh Steele",
@@ -2798,7 +2819,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "D2",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Serena Graham",
@@ -2806,16 +2827,37 @@
     "rmp_id": "VGVhY2hlci0yNzYzMjEx",
     "department": "Biology",
     "match_type": "exact",
-    "course_review_count": 0,
-    "avg_difficulty_1to5": null,
-    "difficulty_n": 0,
-    "avg_quality_1to5": null,
-    "quality_n": 0,
-    "would_take_again_pct": null,
-    "wta_n": 0,
-    "easiness_proxy": null,
+    "course_review_count": 2,
+    "avg_difficulty_1to5": 2.5,
+    "difficulty_n": 2,
+    "avg_quality_1to5": 4.0,
+    "quality_n": 2,
+    "would_take_again_pct": 50.0,
+    "wta_n": 2,
+    "easiness_proxy": 0.25,
     "easiness_proxy_note": "linear proxy (3-difficulty)/2 mapping RMP 1-5 to [-1,+1]; NOT a measured Dartmouth Layup List score",
-    "reviews": []
+    "reviews": [
+     {
+      "id": "UmF0aW5nLTM4MzcxNTI4",
+      "legacyId": 38371528,
+      "class": "BI163L",
+      "date": "2023-11-10 15:13:07 +0000 UTC",
+      "difficultyRating": 1,
+      "clarityRating": 5,
+      "wouldTakeAgain": 1,
+      "grade": ""
+     },
+     {
+      "id": "UmF0aW5nLTM1NzA2MTAx",
+      "legacyId": 35706101,
+      "class": "BI163L",
+      "date": "2022-01-05 22:45:41 +0000 UTC",
+      "difficultyRating": 4,
+      "clarityRating": 3,
+      "wouldTakeAgain": 0,
+      "grade": "Rather not say"
+     }
+    ]
    }
   ]
  },
@@ -2825,7 +2867,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "E1",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Josh Steele",
@@ -2842,7 +2884,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "E2",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Scott Guay",
@@ -2859,7 +2901,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "F1",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Serena Graham",
@@ -2867,16 +2909,37 @@
     "rmp_id": "VGVhY2hlci0yNzYzMjEx",
     "department": "Biology",
     "match_type": "exact",
-    "course_review_count": 0,
-    "avg_difficulty_1to5": null,
-    "difficulty_n": 0,
-    "avg_quality_1to5": null,
-    "quality_n": 0,
-    "would_take_again_pct": null,
-    "wta_n": 0,
-    "easiness_proxy": null,
+    "course_review_count": 2,
+    "avg_difficulty_1to5": 2.5,
+    "difficulty_n": 2,
+    "avg_quality_1to5": 4.0,
+    "quality_n": 2,
+    "would_take_again_pct": 50.0,
+    "wta_n": 2,
+    "easiness_proxy": 0.25,
     "easiness_proxy_note": "linear proxy (3-difficulty)/2 mapping RMP 1-5 to [-1,+1]; NOT a measured Dartmouth Layup List score",
-    "reviews": []
+    "reviews": [
+     {
+      "id": "UmF0aW5nLTM4MzcxNTI4",
+      "legacyId": 38371528,
+      "class": "BI163L",
+      "date": "2023-11-10 15:13:07 +0000 UTC",
+      "difficultyRating": 1,
+      "clarityRating": 5,
+      "wouldTakeAgain": 1,
+      "grade": ""
+     },
+     {
+      "id": "UmF0aW5nLTM1NzA2MTAx",
+      "legacyId": 35706101,
+      "class": "BI163L",
+      "date": "2022-01-05 22:45:41 +0000 UTC",
+      "difficultyRating": 4,
+      "clarityRating": 3,
+      "wouldTakeAgain": 0,
+      "grade": "Rather not say"
+     }
+    ]
    }
   ]
  },
@@ -2886,7 +2949,7 @@
   "subject": "BI",
   "number": "163 L",
   "section_code": "F2",
-  "course_code": "BI163 L",
+  "course_code": "BI163L",
   "professors": [
    {
     "name": "Sarah Gibbs",
@@ -2968,7 +3031,7 @@
   "subject": "BI",
   "number": "211 L",
   "section_code": "A",
-  "course_code": "BI211 L",
+  "course_code": "BI211L",
   "professors": [
    {
     "name": "Kristen Nolting",
@@ -2995,7 +3058,7 @@
   "subject": "BI",
   "number": "211 L",
   "section_code": "B",
-  "course_code": "BI211 L",
+  "course_code": "BI211L",
   "professors": [
    {
     "name": "Kristen Nolting",
@@ -3056,7 +3119,7 @@
   "subject": "BI",
   "number": "225 L",
   "section_code": "A",
-  "course_code": "BI225 L",
+  "course_code": "BI225L",
   "professors": [
    {
     "name": "Andrea Wegrzynowicz",
@@ -3073,7 +3136,7 @@
   "subject": "BI",
   "number": "225 L",
   "section_code": "B",
-  "course_code": "BI225 L",
+  "course_code": "BI225L",
   "professors": [
    {
     "name": "Andrea Wegrzynowicz",
@@ -3107,7 +3170,7 @@
   "subject": "BI",
   "number": "230 L",
   "section_code": "A",
-  "course_code": "BI230 L",
+  "course_code": "BI230L",
   "professors": [
    {
     "name": "Thom Klepach",
@@ -3151,7 +3214,7 @@
   "subject": "BI",
   "number": "241 L",
   "section_code": "A",
-  "course_code": "BI241 L",
+  "course_code": "BI241L",
   "professors": [
    {
     "name": "Suegene Noh",
@@ -3222,7 +3285,7 @@
   "subject": "BI",
   "number": "248 L",
   "section_code": "A",
-  "course_code": "BI248 L",
+  "course_code": "BI248L",
   "professors": [
    {
     "name": "Susan Childers",
@@ -3249,7 +3312,7 @@
   "subject": "BI",
   "number": "248 L",
   "section_code": "B",
-  "course_code": "BI248 L",
+  "course_code": "BI248L",
   "professors": [
    {
     "name": "Susan Childers",
@@ -3303,7 +3366,7 @@
   "subject": "BI",
   "number": "254 L",
   "section_code": "A",
-  "course_code": "BI254 L",
+  "course_code": "BI254L",
   "professors": [
    {
     "name": "Nick Funnell",
@@ -3354,7 +3417,7 @@
   "subject": "BI",
   "number": "271 L",
   "section_code": "A1",
-  "course_code": "BI271 L",
+  "course_code": "BI271L",
   "professors": [
    {
     "name": "Sarah Gibbs",
@@ -3371,7 +3434,7 @@
   "subject": "BI",
   "number": "271 L",
   "section_code": "A2",
-  "course_code": "BI271 L",
+  "course_code": "BI271L",
   "professors": [
    {
     "name": "Amanda Gallinat",
@@ -3388,7 +3451,7 @@
   "subject": "BI",
   "number": "271 L",
   "section_code": "B1",
-  "course_code": "BI271 L",
+  "course_code": "BI271L",
   "professors": [
    {
     "name": "Kyle Coblentz",
@@ -3405,7 +3468,7 @@
   "subject": "BI",
   "number": "271 L",
   "section_code": "B2",
-  "course_code": "BI271 L",
+  "course_code": "BI271L",
   "professors": [
    {
     "name": "Abby Pearson",
@@ -3422,7 +3485,7 @@
   "subject": "BI",
   "number": "271 L",
   "section_code": "C1",
-  "course_code": "BI271 L",
+  "course_code": "BI271L",
   "professors": [
    {
     "name": "Sarah Gibbs",
@@ -3456,7 +3519,7 @@
   "subject": "BI",
   "number": "274 L",
   "section_code": "A",
-  "course_code": "BI274 L",
+  "course_code": "BI274L",
   "professors": [
    {
     "name": "April Chiriboga",
@@ -3473,7 +3536,7 @@
   "subject": "BI",
   "number": "274 L",
   "section_code": "B",
-  "course_code": "BI274 L",
+  "course_code": "BI274L",
   "professors": [
    {
     "name": "April Chiriboga",
@@ -3490,7 +3553,7 @@
   "subject": "BI",
   "number": "274 L",
   "section_code": "C",
-  "course_code": "BI274 L",
+  "course_code": "BI274L",
   "professors": [
    {
     "name": "April Chiriboga",
@@ -3534,7 +3597,7 @@
   "subject": "BI",
   "number": "277 L",
   "section_code": "A",
-  "course_code": "BI277 L",
+  "course_code": "BI277L",
   "professors": []
  },
  {
@@ -3543,7 +3606,7 @@
   "subject": "BI",
   "number": "277 L",
   "section_code": "B",
-  "course_code": "BI277 L",
+  "course_code": "BI277L",
   "professors": []
  },
  {
@@ -3590,7 +3653,7 @@
   "subject": "BI",
   "number": "279 L",
   "section_code": "A",
-  "course_code": "BI279 L",
+  "course_code": "BI279L",
   "professors": [
    {
     "name": "Tina Beachy",
@@ -3607,7 +3670,7 @@
   "subject": "BI",
   "number": "279 L",
   "section_code": "B",
-  "course_code": "BI279 L",
+  "course_code": "BI279L",
   "professors": [
    {
     "name": "Tina Beachy",
@@ -3739,7 +3802,7 @@
   "subject": "BI",
   "number": "367 L",
   "section_code": "A",
-  "course_code": "BI367 L",
+  "course_code": "BI367L",
   "professors": [
    {
     "name": "Vicky Hepburn",
@@ -3756,7 +3819,7 @@
   "subject": "BI",
   "number": "367 L",
   "section_code": "B",
-  "course_code": "BI367 L",
+  "course_code": "BI367L",
   "professors": [
    {
     "name": "Benedikt Blossom",
@@ -3773,7 +3836,7 @@
   "subject": "BI",
   "number": "367 L",
   "section_code": "C",
-  "course_code": "BI367 L",
+  "course_code": "BI367L",
   "professors": [
    {
     "name": "Benedikt Blossom",
@@ -4034,7 +4097,7 @@
   "subject": "CH",
   "number": "121 L",
   "section_code": "A",
-  "course_code": "CH121 L",
+  "course_code": "CH121L",
   "professors": [
    {
     "name": "Bess Koffman",
@@ -4085,7 +4148,7 @@
   "subject": "CH",
   "number": "121 L",
   "section_code": "B",
-  "course_code": "CH121 L",
+  "course_code": "CH121L",
   "professors": [
    {
     "name": "Bess Koffman",
@@ -4261,7 +4324,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "A",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": []
  },
  {
@@ -4270,7 +4333,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "B1",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": []
  },
  {
@@ -4279,7 +4342,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "B2",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": [
    {
     "name": "Lisa Miller",
@@ -4306,7 +4369,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "C",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": [
    {
     "name": "Lisa Miller",
@@ -4333,7 +4396,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "D1",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": [
    {
     "name": "Lisa Miller",
@@ -4360,7 +4423,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "D2",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": [
    {
     "name": "Lisa Miller",
@@ -4387,7 +4450,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "E",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": [
    {
     "name": "Lisa Miller",
@@ -4414,7 +4477,7 @@
   "subject": "CH",
   "number": "141 L",
   "section_code": "F",
-  "course_code": "CH141 L",
+  "course_code": "CH141L",
   "professors": [
    {
     "name": "Vitalii Polubinskyi",
@@ -4448,7 +4511,7 @@
   "subject": "CH",
   "number": "147 L",
   "section_code": "A",
-  "course_code": "CH147 L",
+  "course_code": "CH147L",
   "professors": [
    {
     "name": "Vicky Hepburn",
@@ -4465,7 +4528,7 @@
   "subject": "CH",
   "number": "147 L",
   "section_code": "B",
-  "course_code": "CH147 L",
+  "course_code": "CH147L",
   "professors": [
    {
     "name": "Vicky Hepburn",
@@ -4778,7 +4841,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "A",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4795,7 +4858,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "B1",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4812,7 +4875,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "B2",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4829,7 +4892,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "C",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4846,7 +4909,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "D1",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4863,7 +4926,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "D2",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4880,7 +4943,7 @@
   "subject": "CH",
   "number": "241 L",
   "section_code": "E",
-  "course_code": "CH241 L",
+  "course_code": "CH241L",
   "professors": [
    {
     "name": "Ed Klinkerch",
@@ -4972,7 +5035,7 @@
   "subject": "CH",
   "number": "341 L",
   "section_code": "A1",
-  "course_code": "CH341 L",
+  "course_code": "CH341L",
   "professors": [
    {
     "name": "Greg Drozd",
@@ -4999,7 +5062,7 @@
   "subject": "CH",
   "number": "341 L",
   "section_code": "B1",
-  "course_code": "CH341 L",
+  "course_code": "CH341L",
   "professors": [
    {
     "name": "Greg Drozd",
@@ -5087,7 +5150,7 @@
   "subject": "CH",
   "number": "367 L",
   "section_code": "A",
-  "course_code": "CH367 L",
+  "course_code": "CH367L",
   "professors": [
    {
     "name": "Vicky Hepburn",
@@ -5104,7 +5167,7 @@
   "subject": "CH",
   "number": "367 L",
   "section_code": "B",
-  "course_code": "CH367 L",
+  "course_code": "CH367L",
   "professors": [
    {
     "name": "Benedikt Blossom",
@@ -5121,7 +5184,7 @@
   "subject": "CH",
   "number": "367 L",
   "section_code": "C",
-  "course_code": "CH367 L",
+  "course_code": "CH367L",
   "professors": [
    {
     "name": "Benedikt Blossom",
@@ -6038,7 +6101,7 @@
   "subject": "CS",
   "number": "231 L",
   "section_code": "A",
-  "course_code": "CS231 L",
+  "course_code": "CS231L",
   "professors": [
    {
     "name": "Allen Harper",
@@ -6065,7 +6128,7 @@
   "subject": "CS",
   "number": "231 L",
   "section_code": "B",
-  "course_code": "CS231 L",
+  "course_code": "CS231L",
   "professors": [
    {
     "name": "Allen Harper",
@@ -6130,7 +6193,7 @@
   "subject": "CS",
   "number": "232 L",
   "section_code": "A",
-  "course_code": "CS232 L",
+  "course_code": "CS232L",
   "professors": [
    {
     "name": "Ying Li",
@@ -6147,7 +6210,7 @@
   "subject": "CS",
   "number": "232 L",
   "section_code": "B",
-  "course_code": "CS232 L",
+  "course_code": "CS232L",
   "professors": [
    {
     "name": "Ying Li",
@@ -6212,7 +6275,7 @@
   "subject": "CS",
   "number": "251 L",
   "section_code": "A",
-  "course_code": "CS251 L",
+  "course_code": "CS251L",
   "professors": [
    {
     "name": "Hannen Wolfe",
@@ -9692,7 +9755,7 @@
   "professors": [
    {
     "name": "Grace McGowan",
-    "rmp_name": "Grace  McGowan ",
+    "rmp_name": "Grace McGowan",
     "rmp_id": "VGVhY2hlci0zMTIzMTQ5",
     "department": "English",
     "match_type": "exact",
@@ -10045,7 +10108,7 @@
   "professors": [
    {
     "name": "Chris Walker",
-    "rmp_name": "Christopher  Walker",
+    "rmp_name": "Christopher Walker",
     "rmp_id": "VGVhY2hlci0yODc4MzI5",
     "department": "English",
     "match_type": "exact",
@@ -10072,7 +10135,7 @@
   "professors": [
    {
     "name": "Chris Walker",
-    "rmp_name": "Christopher  Walker",
+    "rmp_name": "Christopher Walker",
     "rmp_id": "VGVhY2hlci0yODc4MzI5",
     "department": "English",
     "match_type": "exact",
@@ -10197,7 +10260,7 @@
   "professors": [
    {
     "name": "Chris Walker",
-    "rmp_name": "Christopher  Walker",
+    "rmp_name": "Christopher Walker",
     "rmp_id": "VGVhY2hlci0yODc4MzI5",
     "department": "English",
     "match_type": "exact",
@@ -10224,7 +10287,7 @@
   "professors": [
    {
     "name": "Grace McGowan",
-    "rmp_name": "Grace  McGowan ",
+    "rmp_name": "Grace McGowan",
     "rmp_id": "VGVhY2hlci0zMTIzMTQ5",
     "department": "English",
     "match_type": "exact",
@@ -10386,7 +10449,7 @@
   "subject": "ER",
   "number": "121 L",
   "section_code": "A",
-  "course_code": "ER121 L",
+  "course_code": "ER121L",
   "professors": [
    {
     "name": "Bess Koffman",
@@ -10437,7 +10500,7 @@
   "subject": "ER",
   "number": "121 L",
   "section_code": "B",
-  "course_code": "ER121 L",
+  "course_code": "ER121L",
   "professors": [
    {
     "name": "Bess Koffman",
@@ -10515,7 +10578,7 @@
   "subject": "ER",
   "number": "125 L",
   "section_code": "A",
-  "course_code": "ER125 L",
+  "course_code": "ER125L",
   "professors": [
    {
     "name": "Tom Whittaker",
@@ -10542,7 +10605,7 @@
   "subject": "ER",
   "number": "125 L",
   "section_code": "B",
-  "course_code": "ER125 L",
+  "course_code": "ER125L",
   "professors": [
    {
     "name": "Tom Whittaker",
@@ -10586,7 +10649,7 @@
   "subject": "ER",
   "number": "129 L",
   "section_code": "A",
-  "course_code": "ER129 L",
+  "course_code": "ER129L",
   "professors": [
    {
     "name": "Tom Whittaker",
@@ -10613,7 +10676,7 @@
   "subject": "ER",
   "number": "129 L",
   "section_code": "B",
-  "course_code": "ER129 L",
+  "course_code": "ER129L",
   "professors": [
    {
     "name": "Tom Whittaker",
@@ -10972,7 +11035,7 @@
   "subject": "ES",
   "number": "255 L",
   "section_code": "A",
-  "course_code": "ES255 L",
+  "course_code": "ES255L",
   "professors": [
    {
     "name": "Nick Funnell",
@@ -11077,7 +11140,7 @@
   "subject": "ES",
   "number": "271 L",
   "section_code": "A1",
-  "course_code": "ES271 L",
+  "course_code": "ES271L",
   "professors": [
    {
     "name": "Sarah Gibbs",
@@ -11094,7 +11157,7 @@
   "subject": "ES",
   "number": "271 L",
   "section_code": "A2",
-  "course_code": "ES271 L",
+  "course_code": "ES271L",
   "professors": [
    {
     "name": "Amanda Gallinat",
@@ -11111,7 +11174,7 @@
   "subject": "ES",
   "number": "271 L",
   "section_code": "B1",
-  "course_code": "ES271 L",
+  "course_code": "ES271L",
   "professors": [
    {
     "name": "Kyle Coblentz",
@@ -11128,7 +11191,7 @@
   "subject": "ES",
   "number": "271 L",
   "section_code": "B2",
-  "course_code": "ES271 L",
+  "course_code": "ES271L",
   "professors": [
    {
     "name": "Abby Pearson",
@@ -11145,7 +11208,7 @@
   "subject": "ES",
   "number": "271 L",
   "section_code": "C1",
-  "course_code": "ES271 L",
+  "course_code": "ES271L",
   "professors": [
    {
     "name": "Sarah Gibbs",
@@ -11166,7 +11229,7 @@
   "professors": [
    {
     "name": "Chris Walker",
-    "rmp_name": "Christopher  Walker",
+    "rmp_name": "Christopher Walker",
     "rmp_id": "VGVhY2hlci0yODc4MzI5",
     "department": "English",
     "match_type": "exact",
@@ -11193,7 +11256,7 @@
   "professors": [
    {
     "name": "Chris Walker",
-    "rmp_name": "Christopher  Walker",
+    "rmp_name": "Christopher Walker",
     "rmp_id": "VGVhY2hlci0yODc4MzI5",
     "department": "English",
     "match_type": "exact",
@@ -11247,7 +11310,7 @@
   "professors": [
    {
     "name": "Chris Walker",
-    "rmp_name": "Christopher  Walker",
+    "rmp_name": "Christopher Walker",
     "rmp_id": "VGVhY2hlci0yODc4MzI5",
     "department": "English",
     "match_type": "exact",
@@ -12990,7 +13053,7 @@
   "professors": [
    {
     "name": "Vivian Ferrillo",
-    "rmp_name": "Vivian  Ferrillo",
+    "rmp_name": "Vivian Ferrillo",
     "rmp_id": "VGVhY2hlci0zMTAwMjMx",
     "department": "Government",
     "match_type": "exact",
@@ -13028,7 +13091,7 @@
   "professors": [
    {
     "name": "Vivian Ferrillo",
-    "rmp_name": "Vivian  Ferrillo",
+    "rmp_name": "Vivian Ferrillo",
     "rmp_id": "VGVhY2hlci0zMTAwMjMx",
     "department": "Government",
     "match_type": "exact",
@@ -13404,7 +13467,7 @@
    {
     "name": "Arnout van der Meer",
     "excluded": true,
-    "reason": "no-rmp-lastname",
+    "reason": "reviews-not-in-snapshot",
     "course_review_count": 0,
     "reviews": []
    }
@@ -13689,7 +13752,7 @@
    {
     "name": "Arnout van der Meer",
     "excluded": true,
-    "reason": "no-rmp-lastname",
+    "reason": "reviews-not-in-snapshot",
     "course_review_count": 0,
     "reviews": []
    }
@@ -13752,7 +13815,7 @@
   "subject": "HI",
   "number": "173 D",
   "section_code": "A",
-  "course_code": "HI173 D",
+  "course_code": "HI173D",
   "professors": [
    {
     "name": "Eloy Romero Blanco",
@@ -13769,7 +13832,7 @@
   "subject": "HI",
   "number": "173 D",
   "section_code": "B",
-  "course_code": "HI173 D",
+  "course_code": "HI173D",
   "professors": [
    {
     "name": "Eloy Romero Blanco",
@@ -13981,7 +14044,7 @@
    {
     "name": "Arnout van der Meer",
     "excluded": true,
-    "reason": "no-rmp-lastname",
+    "reason": "reviews-not-in-snapshot",
     "course_review_count": 0,
     "reviews": []
    }
@@ -14944,7 +15007,7 @@
   "subject": "LA",
   "number": "173 D",
   "section_code": "A",
-  "course_code": "LA173 D",
+  "course_code": "LA173D",
   "professors": [
    {
     "name": "Eloy Romero Blanco",
@@ -14961,7 +15024,7 @@
   "subject": "LA",
   "number": "173 D",
   "section_code": "B",
-  "course_code": "LA173 D",
+  "course_code": "LA173D",
   "professors": [
    {
     "name": "Eloy Romero Blanco",
@@ -15114,7 +15177,7 @@
   "professors": [
    {
     "name": "Rebecca Frank",
-    "rmp_name": "Rebecca  Frank",
+    "rmp_name": "Rebecca Frank",
     "rmp_id": "VGVhY2hlci0zMDczMzE1",
     "department": "Classics",
     "match_type": "exact",
@@ -15158,7 +15221,7 @@
   "professors": [
    {
     "name": "Rebecca Frank",
-    "rmp_name": "Rebecca  Frank",
+    "rmp_name": "Rebecca Frank",
     "rmp_id": "VGVhY2hlci0zMDczMzE1",
     "department": "Classics",
     "match_type": "exact",
@@ -15212,7 +15275,7 @@
   "professors": [
    {
     "name": "Jack Petok",
-    "rmp_name": "Jack  Petok",
+    "rmp_name": "Jack Petok",
     "rmp_id": "VGVhY2hlci0zMDc0NjE3",
     "department": "Mathematics",
     "match_type": "exact",
@@ -15239,7 +15302,7 @@
   "professors": [
    {
     "name": "Jack Petok",
-    "rmp_name": "Jack  Petok",
+    "rmp_name": "Jack Petok",
     "rmp_id": "VGVhY2hlci0zMDc0NjE3",
     "department": "Mathematics",
     "match_type": "exact",
@@ -15381,7 +15444,7 @@
   "professors": [
    {
     "name": "Stephanie Dodson",
-    "rmp_name": "Stephanie  Dodson",
+    "rmp_name": "Stephanie Dodson",
     "rmp_id": "VGVhY2hlci0zMDU2MjQw",
     "department": "Mathematics",
     "match_type": "exact",
@@ -15496,7 +15559,7 @@
   "professors": [
    {
     "name": "Jack Petok",
-    "rmp_name": "Jack  Petok",
+    "rmp_name": "Jack Petok",
     "rmp_id": "VGVhY2hlci0zMDc0NjE3",
     "department": "Mathematics",
     "match_type": "exact",
@@ -15758,7 +15821,7 @@
   "professors": [
    {
     "name": "Stephanie Dodson",
-    "rmp_name": "Stephanie  Dodson",
+    "rmp_name": "Stephanie Dodson",
     "rmp_id": "VGVhY2hlci0zMDU2MjQw",
     "department": "Mathematics",
     "match_type": "exact",
@@ -15923,7 +15986,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16069,7 +16132,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16096,7 +16159,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16218,7 +16281,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16364,7 +16427,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16476,7 +16539,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16622,7 +16685,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16649,7 +16712,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16771,7 +16834,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -16917,7 +16980,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17080,7 +17143,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17107,7 +17170,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17246,7 +17309,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17358,7 +17421,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17504,7 +17567,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17531,7 +17594,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17653,7 +17716,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17799,7 +17862,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -17911,7 +17974,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18057,7 +18120,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18084,7 +18147,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18206,7 +18269,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18352,7 +18415,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18515,7 +18578,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18542,7 +18605,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -18681,7 +18744,7 @@
   "professors": [
    {
     "name": "Brendon Wilkins",
-    "rmp_name": "Brendon  Wilkins",
+    "rmp_name": "Brendon Wilkins",
     "rmp_id": "VGVhY2hlci0yODk0MTY3",
     "department": "Music",
     "match_type": "exact",
@@ -19474,7 +19537,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "A",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Michaela Allen",
@@ -19491,7 +19554,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "B",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Lisa Lessard",
@@ -19518,7 +19581,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "C",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Anna Reine",
@@ -19535,7 +19598,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "D",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Lisa Lessard",
@@ -19562,7 +19625,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "E",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Duncan Tate",
@@ -19589,7 +19652,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "F",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Lisa Lessard",
@@ -19616,7 +19679,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "G",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "James Porter",
@@ -19643,7 +19706,7 @@
   "subject": "PH",
   "number": "141 L",
   "section_code": "H",
-  "course_code": "PH141 L",
+  "course_code": "PH141L",
   "professors": [
    {
     "name": "Elizabeth McGrath",
@@ -20889,7 +20952,7 @@
   "subject": "PS",
   "number": "214 L",
   "section_code": "A",
-  "course_code": "PS214 L",
+  "course_code": "PS214L",
   "professors": [
    {
     "name": "Luke Brooks-Shesler",
@@ -20916,7 +20979,7 @@
   "subject": "PS",
   "number": "214 L",
   "section_code": "B",
-  "course_code": "PS214 L",
+  "course_code": "PS214L",
   "professors": [
    {
     "name": "Luke Brooks-Shesler",
@@ -20943,7 +21006,7 @@
   "subject": "PS",
   "number": "214 L",
   "section_code": "C",
-  "course_code": "PS214 L",
+  "course_code": "PS214L",
   "professors": [
    {
     "name": "Jen Coane",
@@ -20970,7 +21033,7 @@
   "subject": "PS",
   "number": "214 L",
   "section_code": "D",
-  "course_code": "PS214 L",
+  "course_code": "PS214L",
   "professors": [
    {
     "name": "Rachel King",
@@ -20987,7 +21050,7 @@
   "subject": "PS",
   "number": "214 L",
   "section_code": "E",
-  "course_code": "PS214 L",
+  "course_code": "PS214L",
   "professors": [
    {
     "name": "Rachel King",
@@ -22304,7 +22367,7 @@
   "professors": [
    {
     "name": "Zihui Wang",
-    "rmp_name": "Zihui  Wang",
+    "rmp_name": "Zihui Wang",
     "rmp_id": "VGVhY2hlci0zMTM1Mjg0",
     "department": "Mathematics",
     "match_type": "exact",
@@ -22342,7 +22405,7 @@
   "professors": [
    {
     "name": "Zihui Wang",
-    "rmp_name": "Zihui  Wang",
+    "rmp_name": "Zihui Wang",
     "rmp_id": "VGVhY2hlci0zMTM1Mjg0",
     "department": "Mathematics",
     "match_type": "exact",
@@ -22380,7 +22443,7 @@
   "professors": [
    {
     "name": "Zihui Wang",
-    "rmp_name": "Zihui  Wang",
+    "rmp_name": "Zihui Wang",
     "rmp_id": "VGVhY2hlci0zMTM1Mjg0",
     "department": "Mathematics",
     "match_type": "exact",
@@ -23344,7 +23407,7 @@
   "subject": "ST",
   "number": "230 L",
   "section_code": "A",
-  "course_code": "ST230 L",
+  "course_code": "ST230L",
   "professors": [
    {
     "name": "Thom Klepach",
@@ -24158,7 +24221,7 @@
   "professors": [
    {
     "name": "Elizabeth Ketner",
-    "rmp_name": "Elizabeth  Ketner",
+    "rmp_name": "Elizabeth Ketner",
     "rmp_id": "VGVhY2hlci0yMDU0MDgy",
     "department": "Writing",
     "match_type": "exact",
@@ -24185,7 +24248,7 @@
   "professors": [
    {
     "name": "Elizabeth Ketner",
-    "rmp_name": "Elizabeth  Ketner",
+    "rmp_name": "Elizabeth Ketner",
     "rmp_id": "VGVhY2hlci0yMDU0MDgy",
     "department": "Writing",
     "match_type": "exact",
@@ -24348,7 +24411,7 @@
   "professors": [
    {
     "name": "Elizabeth Ketner",
-    "rmp_name": "Elizabeth  Ketner",
+    "rmp_name": "Elizabeth Ketner",
     "rmp_id": "VGVhY2hlci0yMDU0MDgy",
     "department": "Writing",
     "match_type": "exact",
