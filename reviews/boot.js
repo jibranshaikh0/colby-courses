@@ -13,25 +13,27 @@ if (REVIEWS_ENABLED || preview) {
   css.rel = 'stylesheet';
   css.href = 'reviews/reviews.css';
   document.head.appendChild(css);
-  document.addEventListener('toggle', (ev) => {
-    const d = ev.target;
-    if (d.tagName === 'DETAILS' && d.classList.contains('course') && d.open &&
-        !d.querySelector('.student-reviews')) {
-      const body = d.querySelector('.card-body');
-      if (body) {
-        // The card's data-id is the section-level workday_id. Reviews key on the
-        // course code instead (e.g. "AA 120B-A" -> "AA 120B") so sections share one
-        // review pool and can reach the display gate. Cross-listed edge cases are a
-        // Phase 0 check before any real data is collected.
-        const codeEl = d.querySelector('.sum-title .code');
-        const sectionCode = codeEl ? codeEl.textContent.trim() : d.dataset.id;
-        mountStudentReviews(body, {
-          courseId: sectionCode.replace(/-[^-]*$/, ''),
-          sectionId: d.dataset.id,
-          instructorId: null, // working default: course-level; course+instructor is open question 7
-          term: 'Fall 2026',
-        });
-      }
-    }
-  }, true);
+  function mountInto(d) {
+    if (d.tagName !== 'DETAILS' || !d.classList.contains('course') || !d.open) return;
+    if (d.querySelector('.student-reviews')) return;
+    const body = d.querySelector('.card-body');
+    if (!body) return;
+    // The card's data-id is the section-level workday_id. Reviews key on the
+    // course code instead (e.g. "AA 120B-A" -> "AA 120B") so sections share one
+    // review pool and can reach the display gate. Cross-listed edge cases are a
+    // Phase 0 check before any real data is collected.
+    const codeEl = d.querySelector('.sum-title .code');
+    const sectionCode = codeEl ? codeEl.textContent.trim() : d.dataset.id;
+    mountStudentReviews(body, {
+      courseId: sectionCode.replace(/-[^-]*$/, ''),
+      sectionId: d.dataset.id,
+      instructorId: null, // working default: course-level; course+instructor is open question 7
+      term: 'Fall 2026',
+    });
+  }
+  document.addEventListener('toggle', (ev) => mountInto(ev.target), true);
+  // Cards opened before this module finished loading would have missed the toggle
+  // event; sweep for them (and again once data has rendered).
+  document.querySelectorAll('details.course[open]').forEach(mountInto);
+  setTimeout(() => document.querySelectorAll('details.course[open]').forEach(mountInto), 1000);
 }
