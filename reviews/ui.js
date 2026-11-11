@@ -44,6 +44,7 @@ export function mountTestBanner(doc, { onExit }) {
 export function mountTestOptIn(container, { onEnter, onLeave }) {
   const gate = el('div', 'sr-testgate');
   gate.setAttribute('role', 'dialog');
+  gate.setAttribute('aria-modal', 'true');
   gate.setAttribute('aria-labelledby', 'sr-testgate-title');
   const card = el('div', 'sr-testgate-card');
   const title = el('h2', 'sr-testgate-title', 'Student reviews - public test');
@@ -79,6 +80,9 @@ export function mountTestOptIn(container, { onEnter, onLeave }) {
   card.appendChild(row);
   gate.appendChild(card);
   container.prepend(gate);
+  // Move focus into the gate so keyboard users start inside it.
+  card.tabIndex = -1;
+  if (typeof card.focus === 'function') card.focus();
   return gate;
 }
 
@@ -133,7 +137,11 @@ function render(root, ctx) {
     box.appendChild(ul);
   }
   root.appendChild(box);
-  root.appendChild(el('p', 'sr-foot', FOOTNOTE));
+  // Provenance text is required verbatim for the real feature; in TEST MODE it is
+  // dynamically qualified so no simulated number reads as email-verified.
+  root.appendChild(el('p', 'sr-foot', testMode
+    ? 'TEST SIMULATION: every student score and review shown here is simulated and stays in this browser. In the real feature: ' + FOOTNOTE
+    : FOOTNOTE));
 
   if (user) {
     root.appendChild(el('p', 'sr-user',
