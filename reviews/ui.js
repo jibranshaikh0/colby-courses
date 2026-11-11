@@ -1,5 +1,10 @@
 // Student reviews UI. User-generated content is rendered with textContent only -
 // never innerHTML - so review text cannot inject markup.
+//
+// Two simulated display modes share this module:
+// - developer preview (localhost): "LOCAL MOCK PREVIEW" wording;
+// - public TEST MODE (?reviewsTest=1, ctx.testMode): "TEST SIMULATION" wording,
+//   simulated sign-in, and NO claims of real accounts, email or verification.
 import { QUESTIONS, FOOTNOTE } from './survey.js';
 import { MIN_REVIEWS_FOR_DISPLAY } from './config.js';
 import { formatScore } from './score.js';
@@ -18,12 +23,78 @@ export function mountStudentReviews(cardBody, ctx) {
   render(root, ctx);
 }
 
+// Persistent banner pinned to the top of every view while public test mode is
+// active. Unmistakable by design: navy bar, gold rule, plain-language wording.
+export function mountTestBanner(doc, { onExit }) {
+  const bar = el('div', 'sr-testbanner');
+  bar.setAttribute('role', 'status');
+  bar.appendChild(el('span', 'sr-testbanner-text',
+    'TEST MODE - student reviews preview. Nothing is sent: all data stays in this browser. Identity is SIMULATED - no real accounts, no email.'));
+  const exit = el('button', 'sr-testbanner-exit', 'Exit test mode');
+  exit.type = 'button';
+  exit.addEventListener('click', onExit);
+  bar.appendChild(exit);
+  doc.body.prepend(bar);
+  doc.body.classList.add('sr-testmode');
+  return bar;
+}
+
+// Explicit opt-in shown before any review UI appears in public test mode.
+// Returns the gate element so the caller can remove it after entry.
+export function mountTestOptIn(container, { onEnter, onLeave }) {
+  const gate = el('div', 'sr-testgate');
+  gate.setAttribute('role', 'dialog');
+  gate.setAttribute('aria-labelledby', 'sr-testgate-title');
+  const card = el('div', 'sr-testgate-card');
+  const title = el('h2', 'sr-testgate-title', 'Student reviews - public test');
+  title.id = 'sr-testgate-title';
+  card.appendChild(title);
+  card.appendChild(el('p', 'sr-testgate-lede',
+    'This link opens the student-reviews preview in TEST MODE. Before anything appears:'));
+
+  const facts = [
+    'Nothing you enter is sent anywhere. Test data stays in this browser only, in storage reserved for this test.',
+    'Sign-in and identity are SIMULATED. There are no real accounts, no email is sent and nothing is verified.',
+    "Reviews and scores here are simulated and kept separate from the site's imported RateMyProfessors data.",
+  ];
+  const ul = el('ul', 'sr-testgate-facts');
+  for (const f of facts) ul.appendChild(el('li', null, f));
+  card.appendChild(ul);
+
+  const agree = el('label', 'sr-testgate-agree');
+  const cb = el('input'); cb.type = 'checkbox';
+  agree.appendChild(cb);
+  agree.appendChild(el('span', null, ' I understand this is a simulation: nothing is sent or saved outside this browser.'));
+  card.appendChild(agree);
+
+  const row = el('div', 'sr-testgate-actions');
+  const enter = el('button', 'sr-btn sr-btn-primary', 'Enter test mode');
+  enter.type = 'button'; enter.disabled = true;
+  cb.addEventListener('change', () => { enter.disabled = !cb.checked; });
+  enter.addEventListener('click', onEnter);
+  const leave = el('button', 'sr-btn', 'Leave');
+  leave.type = 'button';
+  leave.addEventListener('click', onLeave);
+  row.appendChild(enter); row.appendChild(leave);
+  card.appendChild(row);
+  gate.appendChild(card);
+  container.prepend(gate);
+  return gate;
+}
+
 function render(root, ctx) {
   root.textContent = '';
+  const testMode = ctx.testMode === true;
   const user = backend.currentUser();
 
-  const head = el('p', 'sr-head', 'Student reviews (Rate A Mule, Colby email verified)');
-  if (backend.kind === 'mock') head.appendChild(el('span', 'sr-mock', 'LOCAL MOCK PREVIEW - no email is sent, nothing leaves this browser'));
+  const head = el('p', 'sr-head',
+    testMode ? 'Student reviews (Rate A Mule)'
+             : 'Student reviews (Rate A Mule, Colby email verified)');
+  if (backend.kind === 'mock') {
+    head.appendChild(el('span', 'sr-mock', testMode
+      ? 'TEST SIMULATION - no real accounts, no email, nothing leaves this browser'
+      : 'LOCAL MOCK PREVIEW - no email is sent, nothing leaves this browser'));
+  }
   root.appendChild(head);
 
   // Public stats block (privacy gate: count-only below the threshold).
@@ -37,7 +108,7 @@ function render(root, ctx) {
   } else {
     const line = el('p', 'sr-score');
     line.appendChild(el('span', 'sr-value', 'Student score: ' + formatScore(stats.score)));
-    line.appendChild(document.createTextNode(' (easier \u2191 / harder \u2193)  n = ' + stats.n + ' reviews '));
+    line.appendChild(document.createTextNode(' (easier ↑ / harder ↓)  n = ' + stats.n + ' reviews '));
     if (stats.limited) line.appendChild(el('span', 'sr-limited', 'Limited data'));
     box.appendChild(line);
     const ul = el('ul', 'sr-comments');
@@ -65,7 +136,8 @@ function render(root, ctx) {
   root.appendChild(el('p', 'sr-foot', FOOTNOTE));
 
   if (user) {
-    root.appendChild(el('p', 'sr-user', 'Signed in (mock) as ' + user.email));
+    root.appendChild(el('p', 'sr-user',
+      (testMode ? 'Signed in (simulated) as ' : 'Signed in (mock) as ') + user.email));
     const out = el('button', 'sr-btn', 'Sign out');
     out.type = 'button';
     out.addEventListener('click', () => { backend.signOut(); render(root, ctx); });
@@ -82,22 +154,26 @@ function render(root, ctx) {
       root.appendChild(ul);
     }
   } else {
-    root.appendChild(buildSignIn(root, ctx));
+    root.appendChild(buildSignIn(root, ctx, testMode));
   }
 }
 
-function buildSignIn(root, ctx) {
+function buildSignIn(root, ctx, testMode) {
   const wrap = el('div', 'sr-signin');
-  wrap.appendChild(el('p', 'sr-label', 'Sign in with your @colby.edu email to leave a review.'));
+  wrap.appendChild(el('p', 'sr-label', testMode
+    ? 'Simulated sign-in: enter any @colby.edu-shaped address to try the review flow. No email exists in this test and nothing is verified.'
+    : 'Sign in with your @colby.edu email to leave a review.'));
   const email = el('input', 'sr-input'); email.type = 'email'; email.placeholder = 'you@colby.edu';
-  const send = el('button', 'sr-btn', 'Send code'); send.type = 'button';
+  const send = el('button', 'sr-btn', testMode ? 'Get test code' : 'Send code'); send.type = 'button';
   const msg = el('p', 'sr-msg');
   send.addEventListener('click', () => {
     const r = backend.sendCode(email.value);
     if (!r.ok) { msg.textContent = r.error; return; }
     msg.textContent = '';
-    // MOCK ONLY: the code is shown on screen because no email exists in the mock.
-    const notice = el('p', 'sr-mockcode', 'MOCK: no email was sent. Your code is ' + r.mockCode);
+    // SIMULATED: the code is shown on screen because no email exists in the mock.
+    const notice = el('p', 'sr-mockcode', (testMode
+      ? 'SIMULATED: no email was sent. Your test code is '
+      : 'MOCK: no email was sent. Your code is ') + r.mockCode);
     wrap.appendChild(notice);
     const code = el('input', 'sr-input'); code.inputMode = 'numeric'; code.placeholder = '6-digit code';
     const verify = el('button', 'sr-btn', 'Verify'); verify.type = 'button';
@@ -124,7 +200,8 @@ function buildForm(root, ctx, user) {
       const radio = el('input'); radio.type = 'radio'; radio.name = 'sr-' + q.id; radio.value = String(v);
       radio.addEventListener('change', () => { answers[q.id] = v; });
       lab.appendChild(radio);
-      lab.appendChild(el('span', 'sr-anchor', v + ' - ' + q.anchors[v - 1]));
+      lab.appendChild(el('span', 'sr-num', String(v)));
+      lab.appendChild(el('span', 'sr-anchor', q.anchors[v - 1]));
       fs.appendChild(lab);
     }
     form.appendChild(fs);
@@ -148,7 +225,7 @@ function buildForm(root, ctx, user) {
   attest.appendChild(el('span', null, ' I took this course in the term selected above.'));
   form.appendChild(attest);
   const msg = el('p', 'sr-msg');
-  const submit = el('button', 'sr-btn', 'Submit review'); submit.type = 'button';
+  const submit = el('button', 'sr-btn sr-btn-primary', 'Submit review'); submit.type = 'button';
   submit.addEventListener('click', () => {
     msg.textContent = '';
     if (!cb.checked) { msg.textContent = 'Please confirm you took this course.'; return; }
