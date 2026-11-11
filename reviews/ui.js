@@ -43,8 +43,10 @@ export function mountTestBanner(doc, { onExit }) {
 // Returns the gate element so the caller can remove it after entry.
 export function mountTestOptIn(container, { onEnter, onLeave }) {
   const gate = el('div', 'sr-testgate');
+  // role=dialog without aria-modal: the page behind stays visible and keyboard
+  // reachable, so claiming modality would lie to assistive technology. Focus
+  // still starts inside the gate so keyboard users meet it first.
   gate.setAttribute('role', 'dialog');
-  gate.setAttribute('aria-modal', 'true');
   gate.setAttribute('aria-labelledby', 'sr-testgate-title');
   const card = el('div', 'sr-testgate-card');
   const title = el('h2', 'sr-testgate-title', 'Student reviews - public test');

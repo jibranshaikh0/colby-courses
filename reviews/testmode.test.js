@@ -180,6 +180,7 @@ test('opt-in gate blocks review UI until explicit entry (boot control flow)', as
   await import('./boot.js?gate=1');
   const gate = body.children.find((c) => c.className === 'sr-testgate');
   assert.ok(gate, 'opt-in gate is shown');
+  assert.ok(!gate.attrs['aria-modal'], 'no false modal claim: the page behind stays keyboard-reachable');
   assert.equal(cardBody.children.length, 0, 'no review UI mounts before opt-in');
   assert.ok(!body.children.find((c) => c.className === 'sr-testbanner'), 'no banner before opt-in');
   // explicit entry: tick the checkbox, then click "Enter test mode"

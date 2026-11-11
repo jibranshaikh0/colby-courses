@@ -32,7 +32,7 @@
 .sr-comments { display: grid; gap: var(--space-1); margin: var(--space-1) 0; padding: 0; list-style: none; }
 .sr-comment { padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius); }
 .sr-term { color: var(--muted-fg); font-size: .8125rem; font-weight: 700; }
-.sr-report { min-height: 32px; margin-left: var(--space-1); padding: 0 10px; font-size: .8rem;
+.sr-report { min-height: 44px; margin-left: var(--space-1); padding: 0 10px; font-size: .8rem;
              color: var(--muted-fg); background: transparent; border: 1px solid var(--border);
              border-radius: var(--radius); cursor: pointer; }
 .sr-report[disabled] { opacity: .6; cursor: default; }
@@ -96,7 +96,7 @@
                  padding: 6px var(--space-2); background: var(--primary); color: var(--on-primary);
                  border-bottom: 3px solid var(--accent); font-size: .9375rem; }
 .sr-testbanner-text { font-weight: 700; }
-.sr-testbanner-exit { flex: none; min-height: 36px; padding: 0 12px; font-size: .8125rem;
+.sr-testbanner-exit { flex: none; min-height: 44px; padding: 0 12px; font-size: .8125rem;
                       font-weight: 700; color: var(--primary); background: var(--on-primary);
                       border: none; border-radius: var(--radius); cursor: pointer; }
 
