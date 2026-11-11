@@ -1,15 +1,23 @@
-// MOCK backend adapter for Rate A Mule student reviews - LOCAL PREVIEW ONLY.
+// MOCK backend adapter for Rate A Mule student reviews - SIMULATED ONLY.
 // Everything here runs in the browser against localStorage. Nothing is real:
 // no email is sent, the "verification code" is shown on screen, accounts and
 // reviews live only in this browser. It exists so the UI, survey, scoring,
-// privacy gates and moderation flow can be exercised end-to-end before the
+// privacy gates and moderation flow can be exercised end-to-end - in the
+// localhost developer preview and in the public TEST MODE - before the
 // account-owned real backend (Supabase) is set up. Never describe any behavior
 // of this adapter as production passwordless auth.
 import { QUESTIONS, SURVEY_VERSION } from './survey.js';
 import { validateAnswers, reviewScore, aggregate } from './score.js';
 import { MIN_REVIEWS_FOR_DISPLAY } from './config.js';
 
-const LS_KEY = 'rateamule-reviews-mock-v1';
+// Default storage namespace for the localhost developer preview. The public
+// test gate (?reviewsTest=1) switches this to config.js's TEST_STORAGE_KEY via
+// useStorageKey() before any read or write, so test-mode accounts and reviews
+// stay isolated from preview data and are wiped by removing one key.
+export const MOCK_STORAGE_KEY = 'rateamule-reviews-mock-v1';
+let LS_KEY = MOCK_STORAGE_KEY;
+export function useStorageKey(key) { LS_KEY = String(key || MOCK_STORAGE_KEY); }
+export function storageKey() { return LS_KEY; }
 
 function load() {
   try { return JSON.parse(localStorage.getItem(LS_KEY)) || { users: [], reviews: [], reports: [] }; }

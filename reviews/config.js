@@ -8,3 +8,7 @@ export const BACKEND = 'mock';
 export const SUPABASE_URL = ''; // fill at account setup time
 export const SUPABASE_ANON_KEY = ''; // public anon key only, at account setup time
 export const MIN_REVIEWS_FOR_DISPLAY = 5;
+// Public TEST MODE (?reviewsTest=1) keeps its simulated accounts and reviews in
+// this separate localStorage namespace, isolated from the developer-preview mock
+// data. Wiping this key removes every trace of test-mode activity.
+export const TEST_STORAGE_KEY = 'rateamule-reviews-test-v1';
