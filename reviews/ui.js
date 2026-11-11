@@ -85,6 +85,22 @@ export function mountTestOptIn(container, { onEnter, onLeave }) {
   // Move focus into the gate so keyboard users start inside it.
   card.tabIndex = -1;
   if (typeof card.focus === 'function') card.focus();
+  // A direct #catalog fragment can move browser focus after this module runs.
+  // Reassert initial focus after load/fragment processing, but never after entry
+  // or after the visitor has deliberately started interacting with the page.
+  if (typeof window !== 'undefined') {
+    let interacted = false;
+    const markInteraction = () => { interacted = true; };
+    window.addEventListener('pointerdown', markInteraction, { once: true, capture: true });
+    window.addEventListener('keydown', markInteraction, { once: true, capture: true });
+    const settleFocus = () => window.requestAnimationFrame(() => {
+      window.removeEventListener('pointerdown', markInteraction, true);
+      window.removeEventListener('keydown', markInteraction, true);
+      if (gate.isConnected && !interacted) card.focus();
+    });
+    if (document.readyState === 'complete') settleFocus();
+    else window.addEventListener('load', settleFocus, { once: true });
+  }
   return gate;
 }
 
