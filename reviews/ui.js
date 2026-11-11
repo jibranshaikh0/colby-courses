@@ -29,7 +29,7 @@ export function mountTestBanner(doc, { onExit }) {
   const bar = el('div', 'sr-testbanner');
   bar.setAttribute('role', 'status');
   bar.appendChild(el('span', 'sr-testbanner-text',
-    'TEST MODE - student reviews preview. Nothing is sent: all data stays in this browser. Identity is SIMULATED - no real accounts, no email.'));
+    'TEST MODE - student reviews preview. No review or sign-in details are sent; test entries stay in this browser. Identity is SIMULATED - no real accounts, no email.'));
   const exit = el('button', 'sr-testbanner-exit', 'Exit test mode');
   exit.type = 'button';
   exit.addEventListener('click', onExit);
@@ -54,7 +54,7 @@ export function mountTestOptIn(container, { onEnter, onLeave }) {
     'This link opens the student-reviews preview in TEST MODE. Before anything appears:'));
 
   const facts = [
-    'Nothing you enter is sent anywhere. Test data stays in this browser only, in storage reserved for this test.',
+    'No review or sign-in details you enter are sent anywhere. Test entries stay in this browser only, in storage reserved for this test.',
     'Sign-in and identity are SIMULATED. There are no real accounts, no email is sent and nothing is verified.',
     "Reviews and scores here are simulated and kept separate from the site's imported RateMyProfessors data.",
   ];
@@ -65,7 +65,7 @@ export function mountTestOptIn(container, { onEnter, onLeave }) {
   const agree = el('label', 'sr-testgate-agree');
   const cb = el('input'); cb.type = 'checkbox';
   agree.appendChild(cb);
-  agree.appendChild(el('span', null, ' I understand this is a simulation: nothing is sent or saved outside this browser.'));
+  agree.appendChild(el('span', null, ' I understand this is a simulation: my entries are not sent and stay in this browser.'));
   card.appendChild(agree);
 
   const row = el('div', 'sr-testgate-actions');
@@ -96,8 +96,8 @@ function render(root, ctx) {
              : 'Student reviews (Rate A Mule, Colby email verified)');
   if (backend.kind === 'mock') {
     head.appendChild(el('span', 'sr-mock', testMode
-      ? 'TEST SIMULATION - no real accounts, no email, nothing leaves this browser'
-      : 'LOCAL MOCK PREVIEW - no email is sent, nothing leaves this browser'));
+      ? 'TEST SIMULATION - no real accounts, no email, test entries stay in this browser'
+      : 'LOCAL MOCK PREVIEW - no email is sent, entries stay in this browser'));
   }
   root.appendChild(head);
 

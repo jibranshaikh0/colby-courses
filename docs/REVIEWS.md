@@ -59,7 +59,8 @@ Safeguards baked in (`reviews/boot.js`, `reviews/ui.js`, `reviews/testmode.test.
 - Explicit opt-in: until the visitor reads the disclosure and clicks "Enter test
   mode", no review UI appears. The opt-in is stored in this browser only.
 - A persistent TEST MODE banner stays pinned to the top of every view while test
-  mode is active: nothing is sent, data stays in the browser, identity is SIMULATED.
+  mode is active: no review or sign-in details are sent, test entries stay in
+  this browser, identity is SIMULATED.
 - Isolation: test accounts/reviews live in a separate localStorage namespace
   (`TEST_STORAGE_KEY` in `reviews/config.js`), never mixed with developer-preview
   data or the imported RMP files. "Exit test mode" wipes that namespace and the

@@ -2,7 +2,7 @@
 // nothing, so every phase can merge dark.
 //
 // Two simulated preview paths exist while the real backend remains account-owned
-// work. Both run entirely in the browser - nothing is sent anywhere:
+// work. Both run locally in the browser - no review or sign-in details are sent:
 // - ?reviewsPreview=1, honored only on localhost/127.0.0.1: developer preview.
 // - ?reviewsTest=1, honored on any host: PUBLIC TEST MODE. Requires an explicit
 //   opt-in click, shows a persistent TEST MODE banner, keeps simulated data in
