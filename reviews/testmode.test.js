@@ -225,3 +225,24 @@ test('no network primitives anywhere in reviews/ (grep)', async () => {
     assert.ok(!pat.test(readFileSync('reviews/' + f, 'utf8')), f + ' references the network');
   }
 });
+
+test('review forms in different cards use distinct radio groups (cross-card collision guard)', () => {
+  // Regression for the account-reproduced bug: identical radio names fused all
+  // mounted forms into one group, so answering in one card silently cleared the
+  // visible check in another while its answers object kept the stale value.
+  // The Node DOM stub does not enforce radio-group exclusivity; this guards the
+  // naming contract, and the browser flow test proves the real behavior.
+  localStorage.clear();
+  mock.useStorageKey(TEST_STORAGE_KEY);
+  freshUser('radio@colby.edu');
+  const cardA = new StubEl('div');
+  const cardB = new StubEl('div');
+  ui.mountStudentReviews(cardA, { courseId: 'RA', instructorId: null, term: TERM, testMode: true });
+  ui.mountStudentReviews(cardB, { courseId: 'RB', instructorId: null, term: TERM, testMode: true });
+  const namesA = new Set(), namesB = new Set();
+  walk(cardA, (n) => { if (n.type === 'radio') namesA.add(n.name); });
+  walk(cardB, (n) => { if (n.type === 'radio') namesB.add(n.name); });
+  assert.ok(namesA.size >= 4, 'one radio group per question in form A');
+  assert.ok(namesB.size >= 4, 'one radio group per question in form B');
+  for (const n of namesA) assert.ok(!namesB.has(n), 'radio group shared across cards: ' + n);
+});

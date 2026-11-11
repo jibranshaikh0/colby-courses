@@ -196,7 +196,14 @@ function buildSignIn(root, ctx, testMode) {
   return wrap;
 }
 
+// Radio groups are scoped per form instance: several course cards can be open
+// at once, and identical input names would fuse their radios into one group -
+// picking an answer in one card would silently clear it in another while that
+// form's answers object kept the old value (UI/data mismatch).
+let formSeq = 0;
+
 function buildForm(root, ctx, user) {
+  const formId = ++formSeq;
   const form = el('div', 'sr-form');
   form.appendChild(el('p', 'sr-label', 'Your review (1 = hardest, 5 = easiest for every question)'));
   const answers = {};
@@ -205,7 +212,7 @@ function buildForm(root, ctx, user) {
     fs.appendChild(el('legend', 'sr-qtext', q.text + (q.required ? '' : ' (optional)')));
     for (let v = 1; v <= 5; v++) {
       const lab = el('label', 'sr-opt');
-      const radio = el('input'); radio.type = 'radio'; radio.name = 'sr-' + q.id; radio.value = String(v);
+      const radio = el('input'); radio.type = 'radio'; radio.name = 'sr-f' + formId + '-' + q.id; radio.value = String(v);
       radio.addEventListener('change', () => { answers[q.id] = v; });
       lab.appendChild(radio);
       lab.appendChild(el('span', 'sr-num', String(v)));
