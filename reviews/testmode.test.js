@@ -31,6 +31,7 @@ class StubEl {
   addEventListener(t, f) { (this.listeners[t] ||= []).push(f); }
   setAttribute(k, v) { this.attrs[k] = String(v); }
   remove() { this.removed = true; }
+  set innerHTML(_v) { throw new Error('Unsafe innerHTML assignment in reviews renderer'); }
   set textContent(v) { this.children = v === '' ? [] : [{ text: String(v) }]; }
   get textContent() {
     return this.children.map((c) => (c.text !== undefined ? c.text : c.textContent)).join('');
@@ -76,17 +77,23 @@ test('test namespace is isolated from the developer-preview namespace', () => {
   assert.equal(mock.currentUser()?.email, 'iso@colby.edu');
 });
 
-test('simulated session and reviews persist across a module reload (browser restart)', async () => {
+test('serialized session and full review survive a fresh module import', async () => {
   localStorage.clear();
   mock.useStorageKey(TEST_STORAGE_KEY);
   const u = freshUser('stay@colby.edu');
   const r = mock.submitReview(u, { courseId: 'P1', instructorId: null, term: TERM, answers: ANS });
   assert.equal(r.ok, true);
-  // A fresh module instance = a new page load against the same localStorage.
+  // A fresh module instance reads the serialized localStorage, not module state.
   const fresh = await import('./backend-mock.js?reload=1');
   fresh.useStorageKey(TEST_STORAGE_KEY);
   assert.equal(fresh.currentUser()?.email, 'stay@colby.edu');
-  assert.equal(fresh.myReviews(u, 'P1', null).length, 1);
+  assert.deepEqual(fresh.myReviews(u, 'P1', null), [r.review]);
+  const serialized = JSON.parse(localStorage.getItem(TEST_STORAGE_KEY));
+  assert.deepEqual(serialized.reviews, [r.review]);
+  localStorage.removeItem(TEST_STORAGE_KEY);
+  assert.equal(fresh.currentUser(), null, 'no in-memory session survives removal');
+  assert.deepEqual(fresh.myReviews(u, 'P1', null), [], 'no in-memory reviews survive removal');
+  localStorage.setItem(TEST_STORAGE_KEY, JSON.stringify(serialized));
   assert.ok(store.has(TEST_STORAGE_KEY), 'data lives under the test key');
   assert.equal(store.has(mock.MOCK_STORAGE_KEY), false, 'preview key untouched');
 });
@@ -94,21 +101,23 @@ test('simulated session and reviews persist across a module reload (browser rest
 test('public stats never expose user ids or emails (input privacy)', () => {
   localStorage.clear();
   mock.useStorageKey(TEST_STORAGE_KEY);
+  const expectedComments = [];
   for (let i = 0; i < 5; i++) {
     const u = freshUser('priv' + i + '@colby.edu');
     const first = mock.submitReview(u, { courseId: 'PV0', instructorId: null, term: TERM, answers: ANS });
     mock.mockModerate(first.review.id, 'publish');
-    mock.submitReview(u, { courseId: 'PV1', instructorId: null, term: TERM, answers: ANS, comment: 'note ' + i });
+    const result = mock.submitReview(u, { courseId: 'PV1', instructorId: null, term: TERM, answers: ANS, comment: '@professor note ' + i });
+    expectedComments.push({ id: result.review.id, term: TERM, comment: '@professor note ' + i });
   }
   const stats = mock.publicStats('PV1', null);
   assert.equal(stats.gated, false);
-  const json = JSON.stringify(stats);
-  assert.ok(!json.includes('@'), 'no email addresses in the public payload');
-  assert.ok(!json.includes('userId'), 'no user ids in the public payload');
-  for (const c of stats.comments) assert.deepEqual(Object.keys(c).sort(), ['comment', 'id', 'term']);
+  assert.deepEqual(Object.keys(stats).sort(), ['comments', 'gated', 'limited', 'n', 'score']);
+  assert.deepEqual(stats.comments.slice().sort((a, b) => a.id.localeCompare(b.id)),
+    expectedComments.slice().sort((a, b) => a.id.localeCompare(b.id)),
+    'exact public comment payload preserves legitimate @ text and contains no identity fields');
 });
 
-test('XSS payloads are stored verbatim and render as text only (no img/script nodes)', () => {
+test('exact stored XSS payload becomes a text node with innerHTML assignments forbidden', () => {
   localStorage.clear();
   mock.useStorageKey(TEST_STORAGE_KEY);
   const payload = '<img src=x onerror=alert(1)><script>alert(2)</script>';
@@ -122,14 +131,14 @@ test('XSS payloads are stored verbatim and render as text only (no img/script no
     });
   }
   // stored verbatim (no silent mutation), rendered as text (no markup)
-  assert.ok(JSON.stringify(store.get(TEST_STORAGE_KEY)).includes(payload));
+  assert.equal(JSON.parse(localStorage.getItem(TEST_STORAGE_KEY)).reviews.find(r => r.courseId === 'XS1').comment, payload);
   const card = new StubEl('div');
   ui.mountStudentReviews(card, { courseId: 'XS1', instructorId: null, term: TERM, testMode: true });
   let bad = 0;
   let foundPayload = false;
   walk(card, (n) => {
     if (n.tagName === 'IMG' || n.tagName === 'SCRIPT') bad++;
-    if (n.text !== undefined && n.text.includes('<img src=x onerror=')) foundPayload = true;
+    if (n.text !== undefined && n.text === payload) foundPayload = true;
   });
   assert.equal(bad, 0, 'payload never becomes an element');
   assert.equal(foundPayload, true, 'payload shows as plain text');
@@ -246,4 +255,8 @@ test('review forms in different cards use distinct radio groups (cross-card coll
   assert.ok(namesA.size >= 4, 'one radio group per question in form A');
   assert.ok(namesB.size >= 4, 'one radio group per question in form B');
   for (const n of namesA) assert.ok(!namesB.has(n), 'radio group shared across cards: ' + n);
+});
+
+ test('DOM harness rejects an innerHTML assignment (negative control)', () => {
+  assert.throws(() => { new StubEl('div').innerHTML = '<img src=x>'; }, /Unsafe innerHTML/);
 });
