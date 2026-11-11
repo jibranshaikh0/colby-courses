@@ -154,6 +154,69 @@ test('test-mode UI carries SIMULATED wording and no verification claims', () => 
   assert.ok(/SIMULATED/.test(bar.textContent));
 });
 
+test('opt-in gate blocks review UI until explicit entry (boot control flow)', async () => {
+  localStorage.clear();
+  const head = new StubEl('head');
+  const body = new StubEl('body');
+  const cardBody = new StubEl('div');
+  const openCard = {
+    tagName: 'DETAILS', open: true, dataset: { id: 'AA120B-A' },
+    classList: { contains: (c) => c === 'course' },
+    querySelector: (sel) => {
+      if (sel === '.student-reviews') return cardBody.children.find((c) => c.className === 'student-reviews') || null;
+      if (sel === '.card-body') return cardBody;
+      if (sel === '.sum-title .code') return { textContent: 'AA 120B-A' };
+      return null;
+    },
+  };
+  globalThis.location = { search: '?reviewsTest=1', hostname: 'rateamule.me', href: 'https://rateamule.me/?reviewsTest=1' };
+  globalThis.document = {
+    createElement: (t) => new StubEl(t),
+    createTextNode: (t) => ({ text: String(t) }),
+    head, body,
+    addEventListener: () => {},
+    querySelectorAll: (sel) => (sel === 'details.course[open]' ? [openCard] : []),
+  };
+  await import('./boot.js?gate=1');
+  const gate = body.children.find((c) => c.className === 'sr-testgate');
+  assert.ok(gate, 'opt-in gate is shown');
+  assert.equal(cardBody.children.length, 0, 'no review UI mounts before opt-in');
+  assert.ok(!body.children.find((c) => c.className === 'sr-testbanner'), 'no banner before opt-in');
+  // explicit entry: tick the checkbox, then click "Enter test mode"
+  let checkbox, enter;
+  walk(gate, (n) => {
+    if (n.tagName === 'INPUT' && n.listeners.change) checkbox = n;
+    if (n.tagName === 'BUTTON' && n.textContent === 'Enter test mode') enter = n;
+  });
+  assert.ok(checkbox && enter);
+  assert.equal(enter.disabled, true, 'enter stays disabled until the box is ticked');
+  checkbox.checked = true;
+  checkbox.listeners.change.forEach((f) => f());
+  assert.equal(enter.disabled, false);
+  enter.listeners.click.forEach((f) => f());
+  assert.ok(gate.removed, 'gate removed after entry');
+  assert.ok(body.children.find((c) => c.className === 'sr-testbanner'), 'banner appears after entry');
+  assert.ok(cardBody.children.find((c) => c.className === 'student-reviews'), 'review UI mounts after entry');
+});
+
+test('stored opt-in activates test mode directly on later loads', async () => {
+  localStorage.clear();
+  localStorage.setItem('rateamule-reviews-test-optin', '1');
+  const head = new StubEl('head');
+  const body = new StubEl('body');
+  globalThis.location = { search: '?reviewsTest=1', hostname: 'rateamule.me', href: 'https://rateamule.me/?reviewsTest=1' };
+  globalThis.document = {
+    createElement: (t) => new StubEl(t),
+    createTextNode: (t) => ({ text: String(t) }),
+    head, body,
+    addEventListener: () => {},
+    querySelectorAll: () => [],
+  };
+  await import('./boot.js?gate=2');
+  assert.ok(!body.children.find((c) => c.className === 'sr-testgate'), 'no second gate');
+  assert.ok(body.children.find((c) => c.className === 'sr-testbanner'), 'banner shows directly');
+});
+
 test('no network primitives anywhere in reviews/ (grep)', async () => {
   const { readdirSync, readFileSync } = await import('node:fs');
   const pat = /\bfetch\s*\(|XMLHttpRequest|sendBeacon|WebSocket|EventSource|import\s*\(\s*['"]https?:/;
