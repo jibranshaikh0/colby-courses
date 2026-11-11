@@ -1,6 +1,7 @@
 # Student reviews (Rate A Mule)
 
 Status: in local development behind `REVIEWS_ENABLED` (default false) in `reviews/config.js`.
+A simulated PUBLIC TEST MODE (`?reviewsTest=1`, below) is available for UI testing.
 The full plan lives with the owning account; this file records the decisions baked into the code.
 
 ## Provenance rules (non-negotiable)
@@ -46,12 +47,33 @@ The full plan lives with the owning account; this file records the decisions bak
 ## Local preview
 
 Serve the repo root (`python3 -m http.server`) and open the catalog with
-`?reviewsPreview=1` appended, e.g. `http://localhost:8000/?reviewsPreview=1#/catalog`.
+`?reviewsPreview=1` appended, e.g. `http://localhost:8000/?reviewsPreview=1#catalog`.
 The query flag is honored ONLY on localhost/127.0.0.1, so it can never enable the mock
 UI on the public site; removing it before shipping is still required.
+
+## Public test mode
+
+`?reviewsTest=1` opens the simulated UI on any host, for public UI testing only.
+Safeguards baked in (`reviews/boot.js`, `reviews/ui.js`, `reviews/testmode.test.js`):
+
+- Explicit opt-in: until the visitor reads the disclosure and clicks "Enter test
+  mode", no review UI appears. The opt-in is stored in this browser only.
+- A persistent TEST MODE banner stays pinned to the top of every view while test
+  mode is active: nothing is sent, data stays in the browser, identity is SIMULATED.
+- Isolation: test accounts/reviews live in a separate localStorage namespace
+  (`TEST_STORAGE_KEY` in `reviews/config.js`), never mixed with developer-preview
+  data or the imported RMP files. "Exit test mode" wipes that namespace and the
+  opt-in, then strips the query parameter.
+- No verification claims: test-mode wording never says or implies real accounts,
+  sent email, passwordless auth or verified status. Sign-in is labeled simulated
+  and the on-screen code is labeled as not emailed.
+- No network: a test greps `reviews/` for fetch/XHR/WebSocket/sendBeacon/EventSource
+  and remote dynamic imports; the mock adapter is the only backend.
 
 ## Tests
 
 `node --test 'reviews/*.test.js'` - golden scoring vectors, domain gate, pre-moderation,
-dedupe, privacy gate, report auto-hide. (Note: `node --test reviews/` misruns the bare
+dedupe, privacy gate, report auto-hide, storage isolation, simulated-session persistence
+across reload, public-payload privacy (no ids/emails), XSS render-as-text, test-mode
+simulated wording, no-network grep. (Note: `node --test reviews/` misruns the bare
 directory; use the glob.)
